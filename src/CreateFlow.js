@@ -9,7 +9,7 @@ import {
   Button,
 } from "reactstrap";
 
-function NewFlow() {
+function CreateFlow() {
   const [steps, setSteps] = useState({});
   const [selectedStep, setSelectedStep] = useState("");
   const [stepIndex, setStepIndex] = useState(-1);
@@ -166,4 +166,4 @@ function NewFlow() {
     </Container>
   );
 }
-export default NewFlow;
+export default CreateFlow;
