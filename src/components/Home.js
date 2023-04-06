@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CreateFlow from "./CreateFlow";
+import CreateFlow from "./CreateFlow/CreateFlow";
 import UpdateFlows from "./UpdateFlows";
 import Sidebar from "./Sidebar";
 // import "./styles.css";

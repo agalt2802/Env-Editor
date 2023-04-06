@@ -3,6 +3,7 @@ TOUCHFILE:
       STEP_CONTROL: "destinationFileIsThere"
       STEP_DESTINATIONDIR: "@FLOWPATH@"
       STEP_DESTINATIONFILE: "test.txt"
+      STEP_DESCRIPTION: "create a new file"
 FROMREMOTESFTPGET:
       RUN: "fromRemoteSftpGet"
       STEP_CONTROL: "destinationFileIsThere"
@@ -16,6 +17,7 @@ FROMREMOTESFTPGET:
       SFTP_DELETESOURCE: true
       RETRY: 3
       SLEEP: 30
+      STEP_DESCRIPTION: "get a file from the remote sftp server"
 JWTGENERATION:
       RUN: "jwtGeneration"
       STEP_CONTROL: "destinationFileIsThere"
@@ -34,3 +36,4 @@ JWTGENERATION:
           algorithm: "RS256"
           header:
             x5t: "%X5T%"
+      STEP_DESCRIPTION: "generate a new json web token"
