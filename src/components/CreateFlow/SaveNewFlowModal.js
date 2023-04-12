@@ -35,7 +35,7 @@ function SaveNewFlowModal({ show, setShow, inputValue, setInputValue, flow, setF
   };
 
 
-  if (flow[inputValue] && flow[inputValue].STEPS) {
+  if (flow[inputValue] && flow[inputValue].STEPS.length > 0) {
     return (
       <div className="d-flex justify-content-end">
         <Button

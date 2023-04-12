@@ -3,7 +3,7 @@ import { Container, Row, Col, Label, Input } from "reactstrap";
 
 import "semantic-ui-css/semantic.min.css";
 import StepSelector from "./StepSelector";
-import StepDetail from "./StepDetails";
+import StepDetails from "./StepDetails";
 import SaveNewFlowModal from "./SaveNewFlowModal";
 import AddedStep from "./AddedStep";
 
@@ -54,13 +54,14 @@ function CreateFlow() {
                 setSelectedStep={setSelectedStep}
                 stepIndex={stepIndex}
                 setStepIndex={setStepIndex}
+                inputValue={inputValue}
               />
             </Col>
           </Row>
           <Row>
             <Col>
               {
-                <StepDetail
+                <StepDetails
                   steps={steps}
                   setSteps={setSteps}
                   selectedStep={selectedStep}
