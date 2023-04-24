@@ -23,7 +23,7 @@ function StepDetails({
   setEdit
 }) {
 
-  if (stepIndex === -1) return null;
+  if (stepIndex === -1) return null; // QUESTO CONTROLLA SE è STATO SELEZIONATO UNO STEP
   const step = steps[selectedStep];
 
   const handleValueChange = (event, key) => {

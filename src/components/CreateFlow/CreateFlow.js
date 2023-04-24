@@ -91,6 +91,7 @@ function CreateFlow() {
                 setSteps={setSteps}
                 setSelectedStep={setSelectedStep}
                 setStepIndex={setStepIndex}
+                edit={edit}
               />
             </Col>
           </Row>

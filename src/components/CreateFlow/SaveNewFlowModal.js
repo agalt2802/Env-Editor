@@ -4,7 +4,7 @@ import React from 'react'
 
 import "semantic-ui-css/semantic.min.css";
 
-function SaveNewFlowModal({ show, setShow, inputValue, setInputValue, flow, setFlow, setSteps, setSelectedStep, setStepIndex}) {
+function SaveNewFlowModal({ show, setShow, inputValue, setInputValue, flow, setFlow, setSteps, setSelectedStep, setStepIndex, edit}) {
     function reset() {
     setSteps({});
     setFlow({});
@@ -35,7 +35,7 @@ function SaveNewFlowModal({ show, setShow, inputValue, setInputValue, flow, setF
   };
 
 
-  if (flow[inputValue] && flow[inputValue].STEPS.length > 0) {
+  if (flow[inputValue] && flow[inputValue].STEPS.length > 0 && !edit) {
     return (
       <div className="d-flex justify-content-end">
         <Button

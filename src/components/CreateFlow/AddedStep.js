@@ -19,17 +19,15 @@ function AddedStep({
   setStepIndex,
   setEdit
 }) {
-  console.log("ADDED STEPS: " + JSON.stringify(flow[inputValue].STEPS));
-
   const moveUp = (event, selectedIndex) => {
-    if (flow[inputValue].STEPS[selectedIndex - 1]) {
+    if (flow[inputValue].STEPS[parseInt(selectedIndex) - 1]) {
       let updatedFlow = { ...flow };
 
-      let selectedStep = updatedFlow[inputValue].STEPS[selectedIndex];
-      let stepToSwap = updatedFlow[inputValue].STEPS[selectedIndex - 1];
+      let selectedStep = updatedFlow[inputValue].STEPS[parseInt(selectedIndex)];
+      let stepToSwap = updatedFlow[inputValue].STEPS[parseInt(selectedIndex) - 1];
 
-      updatedFlow[inputValue].STEPS[selectedIndex] = stepToSwap;
-      updatedFlow[inputValue].STEPS[selectedIndex - 1] = selectedStep;
+      updatedFlow[inputValue].STEPS[parseInt(selectedIndex)] = stepToSwap;
+      updatedFlow[inputValue].STEPS[parseInt(selectedIndex) - 1] = selectedStep;
 
       console.log(updatedFlow);
 
@@ -38,14 +36,14 @@ function AddedStep({
   };
 
   const moveDown = (event, selectedIndex) => {
-    if (flow[inputValue].STEPS[selectedIndex + 1]) {
+    if (flow[inputValue].STEPS[parseInt(selectedIndex) + 1]) {
       let updatedFlow = { ...flow };
 
-      let selectedStep = updatedFlow[inputValue].STEPS[selectedIndex];
-      let stepToSwap = updatedFlow[inputValue].STEPS[selectedIndex + 1];
+      let selectedStep = updatedFlow[inputValue].STEPS[parseInt(selectedIndex)];
+      let stepToSwap = updatedFlow[inputValue].STEPS[parseInt(selectedIndex) + 1];
 
-      updatedFlow[inputValue].STEPS[selectedIndex] = stepToSwap;
-      updatedFlow[inputValue].STEPS[selectedIndex + 1] = selectedStep;
+      updatedFlow[inputValue].STEPS[parseInt(selectedIndex)] = stepToSwap;
+      updatedFlow[inputValue].STEPS[parseInt(selectedIndex) + 1] = selectedStep;
 
       console.log(updatedFlow);
 
@@ -55,13 +53,13 @@ function AddedStep({
 
   const deleteStep = (event, selectedIndex) => {
     let updatedFlow = { ...flow };
-    updatedFlow[inputValue].STEPS.splice(selectedIndex, 1);
+    updatedFlow[inputValue].STEPS.splice(parseInt(selectedIndex), 1);
     setFlow(updatedFlow);
   };
 
   const editStep = (event, selectedIndex) => {
   
-    let stepToEdit = flow[inputValue].STEPS[selectedIndex].RUN.toLocaleUpperCase()    
+    let stepToEdit = flow[inputValue].STEPS[parseInt(selectedIndex)].RUN.toLocaleUpperCase()    
     setSelectedStep(stepToEdit)
 
     let stepsArray = Object.keys(steps); // potrebbe tornarmi utile
@@ -73,7 +71,7 @@ function AddedStep({
 
   return (
     <Row className="g-3">
-      <Card id="addedSteps">
+      <Card id="steps">
         <Card.Header>STEPS</Card.Header>
       </Card>
       {flow[inputValue].STEPS.map((step) => (

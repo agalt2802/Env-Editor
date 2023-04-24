@@ -20,14 +20,14 @@ function CronDetails({crons, setCrons, selectedCron, setSelectedCron, cronFlows,
   };
 
   const moveUp = (event, selectedIndex) => {
-    if (cronFlows[selectedIndex - 1]) {
+    if (cronFlows[parseInt(selectedIndex) - 1]) {
       let updatedCronFlows = cronFlows
 
-      let selectedCronFlow = updatedCronFlows[selectedIndex];
-      let cronToSwap = updatedCronFlows[selectedIndex - 1];
+      let selectedCronFlow = updatedCronFlows[parseInt(selectedIndex)];
+      let cronToSwap = updatedCronFlows[parseInt(selectedIndex) - 1];
 
-      updatedCronFlows[selectedIndex] = cronToSwap;
-      updatedCronFlows[selectedIndex - 1] = selectedCronFlow;
+      updatedCronFlows[parseInt(selectedIndex)] = cronToSwap;
+      updatedCronFlows[parseInt(selectedIndex) - 1] = selectedCronFlow;
 
       console.log(updatedCronFlows);
 
@@ -36,14 +36,15 @@ function CronDetails({crons, setCrons, selectedCron, setSelectedCron, cronFlows,
   };
 
   const moveDown = (event, selectedIndex) => {
-    if (cronFlows[selectedIndex + 1]) {
+    console.log("ciao")
+    if (cronFlows[parseInt(parseInt(selectedIndex)) + 1]) {
       let updatedCronFlows = cronFlows;
 
-      let selectedCronFlow = updatedCronFlows[selectedIndex];
-      let cronFlowToSwap = updatedCronFlows[selectedIndex + 1];
+      let selectedCronFlow = updatedCronFlows[parseInt(selectedIndex)];
+      let cronFlowToSwap = updatedCronFlows[parseInt(selectedIndex) + 1];
 
-      updatedCronFlows[selectedIndex] = cronFlowToSwap;
-      updatedCronFlows[selectedIndex + 1] = selectedCronFlow;
+      updatedCronFlows[parseInt(selectedIndex)] = cronFlowToSwap;
+      updatedCronFlows[parseInt(selectedIndex) + 1] = selectedCronFlow;
 
       console.log(updatedCronFlows);
 
@@ -53,7 +54,7 @@ function CronDetails({crons, setCrons, selectedCron, setSelectedCron, cronFlows,
 
   const deleteStep = (event, selectedIndex) => {
     let updatedCronFlows = cronFlows;
-    updatedCronFlows.splice(selectedIndex, 1);
+    updatedCronFlows.splice(parseInt(selectedIndex), 1);
     setCronFlows(updatedCronFlows);
   };
 
