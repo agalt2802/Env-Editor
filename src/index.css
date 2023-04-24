@@ -14,7 +14,7 @@ code {
 
 /*Home Page style */
 
-#homePageContainer{
+#homePageContainer, #viewLogsContainer{
   width: 70%;
 }
 
@@ -32,7 +32,7 @@ a.nav-link{
   font-weight: 700;
 }
 
-.nav-link.active  {
+a.nav-link.active  {
   height: 100%;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: white !important;
@@ -61,7 +61,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-#addedSteps{
+#steps{
   top: 10px;
   width: 100%;
   text-align: center;

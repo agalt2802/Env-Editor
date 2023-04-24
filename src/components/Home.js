@@ -3,6 +3,7 @@ import CreateFlow from "./CreateFlow/CreateFlow";
 import UpdateFlows from "./UpdateFlows/UpdateFlows";
 import CreateCron from "./CreateCron/CreateCron"
 import EditCron from "./EditCron/EditCron";
+import ViewLogs from "./ViewLogs/ViewLogs";
 import { Container, Row, Col, Label, Input } from "reactstrap";
 import Nav from "react-bootstrap/Nav";
 
@@ -56,7 +57,10 @@ function Home() {
         <CreateCron/>
       ) : selectedComponent === "EditCron" ? (
         <EditCron/>
-      ) : (
+      ) : selectedComponent === "ViewLogs" ? (
+        <ViewLogs/>
+      )  
+      : (
         <div className="home"></div>
       )}
       </Row>
