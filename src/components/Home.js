@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import EditCommons from "./EditCommons/EditCommons";
 import CreateFlow from "./CreateFlow/CreateFlow";
 import UpdateFlows from "./UpdateFlows/UpdateFlows";
 import CreateCron from "./CreateCron/CreateCron"
@@ -31,6 +32,9 @@ function Home() {
       </Row>
       <Row>
         <Nav justify variant="tabs" onSelect={(selectedKey) => handleSelectComponent(event, selectedKey)}>
+        <Nav.Item>
+            <Nav.Link eventKey={"EditCommons"}  >EDIT COMMONS</Nav.Link>
+          </Nav.Item>
           <Nav.Item>
             <Nav.Link eventKey={"CreateFlow"} >CREATE FLOW</Nav.Link>
           </Nav.Item>
@@ -49,7 +53,9 @@ function Home() {
         </Nav>
       </Row>
       <Row>
-      {selectedComponent === "CreateFlow" ? (
+      {selectedComponent === "EditCommons" ? (
+        <EditCommons />
+      ) : selectedComponent === "CreateFlow" ? (
         <CreateFlow />
       ) : selectedComponent === "UpdateFlows" ? (
         <UpdateFlows />

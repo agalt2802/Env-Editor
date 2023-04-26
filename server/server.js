@@ -23,6 +23,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/commons", (req, res) => {
+  let envContent = yaml.load(fs.readFileSync("./server/commons.yml")); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+  res.send(envContent);
+});
+
 app.get("/steps", (req, res) => {
   let envContent = yaml.load(fs.readFileSync("./server/steps.yml")); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
@@ -36,6 +41,12 @@ app.get("/flows", (req, res) => {
 app.get("/crons", (req, res) => {
   let envContent = yaml.load(fs.readFileSync("./server/cronConf.yml")); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
+});
+
+app.post("/updateCommons", (req, res) => {
+  let env = fs.readFileSync("./server/commons.yml");
+  fs.writeFileSync("./server/commons_backup.yaml", env);
+  res.send(fs.writeFileSync("./server/commons.yml", yaml.dump(req.body)));
 });
 
 app.post("/getLogs", (req, res) => {

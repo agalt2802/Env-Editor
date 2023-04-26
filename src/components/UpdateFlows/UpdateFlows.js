@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  FormGroup,
-  Label,
-  Input,
-  Button,
-} from "reactstrap";
+import { Container, Row, Col, Button } from "reactstrap";
 import SelectedStepDetails from "./SelectedStepDetails";
 import FlowSelector from "./FlowSelector";
 import AddedSteps from "./AddedSteps";
@@ -25,40 +17,54 @@ function UpdateFlows() {
   const [showModal, setShowModal] = useState(false);
   const [showAddStep, setShowAddStep] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
-  const [steps, setSteps] = useState([])
-  // const [inputValue, setInputValue] = useState("");
+  const [steps, setSteps] = useState([]);
+  const [edit, setEdit] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const notEditableFileds = ["RUN", "STEP_CONTROL", "STEP_DESCRIPTION"];
 
-  const handleValueChange = (event, key) => {
-    const updatedFlows = { ...flows };
-    updatedFlows[selectedFlow].STEPS[stepIndex][key] = event.target.value;
-    setFlows(updatedFlows);
-  };
+  async function saveData() {
+    await fetch("http://127.0.0.1:8081/updateFlows", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(flows),
+    }).catch((error) => console.log(error));
+    console.log("salva flusso");
+  }
 
   const handleShowAddStep = () => {
     setShowAddStep(true);
   };
 
-  const handleShowSaveModal = () =>{
-    setShowSaveModal(true)
-  }
-  
-  const handleConfirmSaveEdit = () =>{
-    event.preventDefault()
-    async function saveData() {
-      await fetch("http://127.0.0.1:8081/updateFlows", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(flows),
-      }).catch((error) => console.log(error));
-      console.log("salva flusso");
-    }
-    saveData()
-    setShowSaveModal(false)
-  }
+  const handleShowSaveModal = () => {
+    setShowSaveModal(true);
+  };
+
+  const handleConfirmSaveEdit = () => {
+    event.preventDefault();
+    saveData();
+    setShowSaveModal(false);
+  };
+
+  const handeleEdit = () => {
+    setEdit(true);
+  };
+
+  const handleDelete = (event) => {
+    console.log(flows);
+    const updatedFlows = flows;
+    delete updatedFlows[selectedFlow];
+    setFlows(updatedFlows);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    saveData();
+    setShowDeleteModal(false);
+    setSelectedFlow("");
+  };
 
   return (
     <Container>
@@ -79,28 +85,49 @@ function UpdateFlows() {
               setSelectedStep={setSelectedStep}
             />
           </Row>
-          <Row>
-            {show && (
-              <SelectedStepDetails
-                flows={flows}
-                setFlows={setFlows}
-                selectedFlow={selectedFlow}
-                setSelectedFlow={setSelectedFlow}
-                // selectedStep={selectedStep}
-                // setSelectedStep={setSelectedStep}
-                stepIndex={stepIndex}
-                setStepIndex={setStepIndex}
-                setShow={setShow}
-                // setFlow={setSelectedFlow}
-                // inputValue={inputValue}
-                notEditableFileds={notEditableFileds}
-                // setEdit={setEdit}
-                showModal={showModal}
-                setShowModal={setShowModal}
-              />
+          {!edit &&
+            selectedFlow != "" && ( // manca da risettare edit per tornare all'inizio
+              <Row>
+                <Col>
+                <Button
+                  color="success"
+                  className="button"
+                  onClick={handeleEdit}
+                >
+                  EDIT
+                </Button>
+                </Col>
+                <Col>
+                <Button
+                  color="danger"
+                  className="button"
+                  onClick={handleDelete}
+                >
+                  DELETE
+                </Button>
+                </Col>
+              </Row>
             )}
-          </Row>
-          {selectedFlow != "" && (
+          {edit && (
+            <Row>
+              {show && (
+                <SelectedStepDetails
+                  flows={flows}
+                  setFlows={setFlows}
+                  selectedFlow={selectedFlow}
+                  setSelectedFlow={setSelectedFlow}
+                  stepIndex={stepIndex}
+                  setStepIndex={setStepIndex}
+                  setShow={setShow}
+                  notEditableFileds={notEditableFileds}
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                />
+              )}
+            </Row>
+          )}
+
+          {edit && selectedFlow != "" && (
             <Row>
               <Col>
                 <Button
@@ -124,14 +151,16 @@ function UpdateFlows() {
           )}
         </Col>
         <Col>
-          <AddedSteps
-            selectedFlow={selectedFlow}
-            setSelectedStep={setSelectedStep}
-            flows={flows}
-            setFlows={setFlows}
-            setStepIndex={setStepIndex}
-            setShow={setShow}
-          />
+          {edit && (
+            <AddedSteps
+              selectedFlow={selectedFlow}
+              setSelectedStep={setSelectedStep}
+              flows={flows}
+              setFlows={setFlows}
+              setStepIndex={setStepIndex}
+              setShow={setShow}
+            />
+          )}
         </Col>
       </Row>
 
@@ -162,19 +191,35 @@ function UpdateFlows() {
 
       <Modal
         show={showSaveModal}
-        onHide={() => setShowAddStep(false)}
+        onHide={() => setShowSaveModal(false)}
         autoFocus={false}
         onChange={(event) => event.preventDefault()}
       >
         <Modal.Header closeButton> Salvare le modifiche</Modal.Header>
-        <Modal.Body>
-              Salvare le modifiche al flusso {selectedFlow}?
-        </Modal.Body>
+        <Modal.Body>Salvare le modifiche al flusso {selectedFlow}?</Modal.Body>
         <Modal.Footer>
-        <Button color="success" onClick={handleConfirmSaveEdit}>
+          <Button color="success" onClick={handleConfirmSaveEdit}>
             Conferma
           </Button>
           <Button color="danger" onClick={() => setShowSaveModal(false)}>
+            Annulla
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        autoFocus={false}
+        onChange={(event) => event.preventDefault()}
+      >
+        <Modal.Header closeButton> Attenzione!</Modal.Header>
+        <Modal.Body>Vuoi eliminare il flusso {selectedFlow}?</Modal.Body>
+        <Modal.Footer>
+          <Button color="success" onClick={handleConfirmDelete}>
+            Conferma
+          </Button>
+          <Button color="danger" onClick={() => setShowDeleteModal(false)}>
             Annulla
           </Button>
         </Modal.Footer>
