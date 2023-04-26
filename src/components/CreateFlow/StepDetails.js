@@ -32,6 +32,13 @@ function StepDetails({
     setSteps(updatedSteps);
   };
 
+  const handleNestedValueChange = (event, key, key1) =>{
+    const updatedSteps = { ...steps };
+    updatedSteps[selectedStep][key][key1] = event.target.value;
+    setSteps(updatedSteps);
+
+  }
+
   const handleAddStep = (event) => {
     const updatedFlow = { ...flow };
     console.log(updatedFlow);
@@ -72,6 +79,7 @@ function StepDetails({
   return (
     <div>
       {Object.keys(step).map((key) => (
+        !(step[key] instanceof Object) ?
         <FormGroup key={key}>
           <Label>{key}</Label>
           <Input
@@ -81,7 +89,21 @@ function StepDetails({
             onChange={(event) => handleValueChange(event, key)}
             readOnly={notEditableFileds.find((element) => element === key)}
           />
-        </FormGroup>
+        </FormGroup>:
+         <div>
+         <Label><h3>{key}</h3></Label>
+         {Object.keys(step[key]).map((key1)=>(
+           <FormGroup key={key1}>
+           <Label>{key1}</Label>
+           <Input
+             type="text"
+             name={key1}
+             value={step[key][key1]}
+             onChange={(event) => handleNestedValueChange(event, key, key1)}
+           />
+         </FormGroup>
+       ))}
+         </div> 
       ))}
       { !edit ?
       <div className="d-flex justify-content-end">
