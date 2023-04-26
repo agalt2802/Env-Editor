@@ -7,6 +7,7 @@ const format = require("date-format");
 
 let PORT = 8081;
 let IP = "127.0.0.1";
+
 let app = new express();
 http.createServer(app).listen(PORT, IP, () => {
   try {
@@ -23,30 +24,32 @@ app.use((req, res, next) => {
   next();
 });
 
+let serverConfig = yaml.load(fs.readFileSync("./server/serverConfig.yml"))
+
 app.get("/commons", (req, res) => {
-  let envContent = yaml.load(fs.readFileSync("./server/commons.yml")); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+  let envContent = yaml.load(fs.readFileSync(serverConfig.COMMONS_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
 });
 
 app.get("/steps", (req, res) => {
-  let envContent = yaml.load(fs.readFileSync("./server/steps.yml")); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+  let envContent = yaml.load(fs.readFileSync(serverConfig.STEPS_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
 });
 
 app.get("/flows", (req, res) => {
-  let envContent = yaml.load(fs.readFileSync("./server/env.yml")); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+  let envContent = yaml.load(fs.readFileSync(serverConfig.ENV_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
 });
 
 app.get("/crons", (req, res) => {
-  let envContent = yaml.load(fs.readFileSync("./server/cronConf.yml")); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+  let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
 });
 
 app.post("/updateCommons", (req, res) => {
-  let env = fs.readFileSync("./server/commons.yml");
-  fs.writeFileSync("./server/commons_backup.yaml", env);
-  res.send(fs.writeFileSync("./server/commons.yml", yaml.dump(req.body)));
+  let env = fs.readFileSync(serverConfig.COMMONS_PATH);
+  fs.writeFileSync(serverConfig.COMMONS_BACKUP_PATH, env);
+  res.send(fs.writeFileSync(serverConfig.COMMONS_PATH, yaml.dump(req.body)));
 });
 
 app.post("/getLogs", (req, res) => {
@@ -56,11 +59,10 @@ app.post("/getLogs", (req, res) => {
   console.log("FORMATTED DATE: " + date);
   let logs;
   try {
-    logs = fs.readFileSync(
-      "C:\\Users\\agalt\\OneDrive\\Desktop\\conf\\CT_FLOWS\\" +
-        date +
-        "\\log.txt"
-    );
+    let commons = yaml.load(fs.readFileSync(serverConfig.COMMONS_PATH))
+    let logPath = commons.COMMONS.ROOTPATH + "\\" + date + "\\" + commons.COMMONS.LOG_FILE 
+    console.log(logPath)
+    logs = fs.readFileSync(logPath);
   } catch (error) {
     logs = false;
   }
@@ -70,21 +72,21 @@ app.post("/getLogs", (req, res) => {
 });
 
 app.post("/newFlow", (req, res) => {
-  let env = fs.readFileSync("./server/env.yml");
-  fs.writeFileSync("./server/env_backup.yaml", env);
+  let env = fs.readFileSync(serverConfig.ENV_PATH);
+  fs.writeFileSync(serverConfig.ENV_BACKUP_PATH, env);
   res.send(
-    fs.appendFileSync("./server/env.yml", yaml.dump(req.body)) //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+    fs.appendFileSync(serverConfig.ENV_PATH, yaml.dump(req.body)) //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   );
 });
 
 app.post("/updateFlows", (req, res) => {
-  let env = fs.readFileSync("./server/env.yml");
-  fs.writeFileSync("./server/env_backup.yaml", env);
-  res.send(fs.writeFileSync("./server/env.yml", yaml.dump(req.body)));
+  let env = fs.readFileSync(serverConfig.ENV_PATH);
+  fs.writeFileSync(serverConfig.ENV_BACKUP_PATH, env);
+  res.send(fs.writeFileSync(serverConfig.ENV_PATH, yaml.dump(req.body)));
 });
 
 app.post("/newCron", (req, res) => {
-  let envContent = yaml.load(fs.readFileSync("./server/cronConf.yml")); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+  let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   let crons = [];
   envContent.CRON_CONFS.CRONS.forEach((element) => {
     crons.push(element.RUN);
@@ -94,14 +96,14 @@ app.post("/newCron", (req, res) => {
     res.status(500).send(error.message);
   } else {
     envContent.CRON_CONFS.CRONS.push(req.body);
-    let cron = fs.readFileSync("./server/cronConf.yml");
-    fs.writeFileSync("./server/cronConf_backup.yaml", cron);
-    res.send(fs.writeFileSync("./server/cronConf.yml", yaml.dump(envContent)));
+    let cron = fs.readFileSync(serverConfig.CRONCONF_PATH);
+    fs.writeFileSync(serverConfig.CRONCONF_BACKUP_PATH, cron);
+    res.send(fs.writeFileSync(serverConfig.CRONCONF_PATH, yaml.dump(envContent)));
   }
 });
 
 app.post("/saveEditedCron", (req, res) => {
-  let envContent = yaml.load(fs.readFileSync("./server/cronConf.yml")); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+  let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
 
   console.log(req.body);
 
@@ -119,8 +121,8 @@ app.post("/saveEditedCron", (req, res) => {
   envContent.CRON_CONFS.CRONS.splice(indexToEdit, 1, req.body);
   console.log("Updated crons: " + JSON.stringify(envContent.CRON_CONFS.CRONS));
 
-  let cron = fs.readFileSync("./server/cronConf.yml");
-  fs.writeFileSync("./server/cronConf_backup.yaml", cron);
+  let cron = fs.readFileSync(serverConfig.CRONCONF_PATH);
+  fs.writeFileSync(serverConfig.CRONCONF_BACKUP_PATH, cron);
 
-  res.send(fs.writeFileSync("./server/cronConf.yml", yaml.dump(envContent)));
+  res.send(fs.writeFileSync(serverConfig.CRONCONF_PATH, yaml.dump(envContent)));
 });

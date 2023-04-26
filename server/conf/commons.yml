@@ -1,6 +1,6 @@
 COMMONS:
-  ROOTPATH: "agalt/CT_FLOWS"
-  FLOWSPATH: "agalt/CT_FLOWS/%ddMMyyyy%"
+  ROOTPATH: "C:\\Users\\agalt\\OneDrive\\Desktop\\conf\\CT_FLOWS"
+  FLOWSPATH: "C:\\Users\\agalt\\OneDrive\\Desktop\\conf\\CT_FLOWS\\%ddMMyyyy%"
   DAILY_INFOFILE: "nomefileinfo.txt"
   ENV: DEV
   CLOUD: true

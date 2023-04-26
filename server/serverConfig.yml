@@ -1,0 +1,7 @@
+COMMONS_PATH: "./server/conf/commons.yml"
+CRONCONF_PATH: "./server/conf/cronConf.yml"
+ENV_PATH: "./server/conf/env.yml"
+STEPS_PATH: "./server/conf/steps.yml"
+COMMONS_BACKUP_PATH: "./server/conf/commons_backup.yml"
+CRONCONF_BACKUP_PATH: "./server/conf/cronConf_backup.yml"
+ENV_BACKUP_PATH: "./server/conf/env_backup.yml"
