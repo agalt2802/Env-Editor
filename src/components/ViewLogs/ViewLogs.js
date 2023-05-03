@@ -3,7 +3,6 @@ import { Container, Row, Col, Label, Input } from "reactstrap";
 import { Modal, Button } from "react-bootstrap";
 
 import Logs from "./Logs";
-import { set } from "react-hook-form";
 
 function ViewLogs() {
   const [selectedDate, setSelectedDate] = useState("");
@@ -11,18 +10,15 @@ function ViewLogs() {
   const [logs, setLogs] = useState([]);
 
   let today = new Date().toISOString().split("T")[0];
+  let date;
   console.log(today);
 
   const handleSelectDate = (event) => {
-    let date = new Date(event.target.value);
-    date = date.toISOString().split("T")[0];
-
+    setSelectedDate(date);
     if (date > today) {
       setLogs(false)
       setShowModal(true);
-      setSelectedDate(date);
     } else {
-      setSelectedDate(date);
       async function getLogs() {
         let response = await fetch("http://127.0.0.1:8081/getLogs", {
           method: "POST",
@@ -46,20 +42,33 @@ function ViewLogs() {
     }
   };
 
+  const handlePickDate = (event) =>{
+    console.log(event.target)
+    date = new Date(event.target.value);
+    date = date.toISOString().split("T")[0];
+  }
+
   const handleModel = () => {
     setShowModal(false);
-    setSelectedDate("");
+    // setSelectedDate("");
   };
 
   return (
     <Container id="viewLogsContainer">
       <h1>View Logs</h1>
       <Label>Select a day</Label>
+      <Row>
+        <Col>
       <Input
         type="date"
-        value={selectedDate}
-        onChange={handleSelectDate}
+        value={date}
+        onChange={handlePickDate}
       ></Input>
+      </Col>
+      <Col>
+      <Button onClick={handleSelectDate}>Select Date</Button>
+      </Col>
+      </Row>
       <Row>
         { logs &&
            <Logs logs={logs} setLogs={setLogs} selectedDate={selectedDate} />
