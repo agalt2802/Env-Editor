@@ -1,39 +1,384 @@
+DELETEFOLDERS:
+      RUN: "deleteFolders"
+      STEP_CONTROL: "verifyDeleteFolders"
+      STEP_DAYS_BEFORE: "25"
+SENDREPORT:
+      RUN: "sendReport"
+      STEP_CONTROL: "verifySendReport"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@"
+      STEP_DESTINATIONFILE: "tmp@DAILY_INFOFILE@"
+      STEP_SOURCEDIR: "@FLOWSPATH@"
+      STEP_SOURCEFILE: "@DAILY_INFOFILE@"
+      STEP_MAIL_TO: "o1.rouhaim@reply.it, a1.altomare@reply.it"
+      STEP_MAIL_SUBJECT: "STARTED FLOW @FLOWNAME@"
+      MAILTEXT: "|
+        A seguire il report dei flussi eseguiti in data odierna:"
+FROMREMOTESFTPGET:
+      RUN: "fromRemoteSftpGet"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_SFTP_SOURCE_PATH: "<STEP_SFTP_SOURCE_PATH>"
+      STEP_SFTP_SOURCE_FILE: "LOCALINIT%yyMMdd%.csv"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "ONSERVER%yyyyMMdd%.csv"
+      STEP_DESCRIPTION: "create a csv from txt file"
+      SFTP_DELETESOURCE: "true"
+      SFTP_USERNAME: "SECRETS.SFTPSERVICE.SFTP_USERNAME"
+      SFTP_PASSWORD: "SECRETS.SFTPSERVICE.SFTP_PASSWORD"
+      RETRY: 5
+      SLEEP: 5
 TOUCHFILE:
       RUN: "touchFile"
       STEP_CONTROL: "destinationFileIsThere"
       STEP_DESTINATIONDIR: "@FLOWPATH@"
-      STEP_DESTINATIONFILE: "test.txt"
-      STEP_DESCRIPTION: "create a new file"
-FROMREMOTESFTPGET:
-      RUN: "fromRemoteSftpGet"
-      STEP_CONTROL: "destinationFileIsThere"
-      SFTP_USERNAME: "SECRETS.SFTPSERVICE.DBU_USERNAME"
-      SFTP_KEY: "SECRETS.SFTPSERVICE.DBU_KEY"
-      SFTP_PASSPHRASE: "SECRETS.SFTPSERVICE.DBU_PASSPHRASE"
-      STEP_SFTP_SOURCE_PATH: "/cygdrive/r/CT/"
-      STEP_SFTP_SOURCE_FILE: "TIMKPIONHM_%yyyyMMdd%.csv"
-      STEP_DESTINATIONDIR: "@FLOWPATH@"
-      STEP_DESTINATIONFILE: "TIMKPIONHM_%yyyyMMdd%.csv"
-      SFTP_DELETESOURCE: true
+      STEP_DESTINATIONFILE: "touchfile.txt.OK"
+      STEP_DESCRIPTION: "create thumb file, at the end will be copied to SENT extension"
+TOREMOTESFTPPUT:
+      RUN: "toRemoteSftpPut"
+      STEP_CONTROL: "controlFileIsThere"
+      STEP_CONTROLFILE: "touchfile.txt.SENT"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_SOURCEFILE: "ONSERVER%yyyyMMdd%.csv"
+      STEP_SFTP_DEST_PATH: "<STEP_SFTP_DEST_PATH>"
+      STEP_SFTP_DEST_FILE: "LOCALINIT%yyMMdd%.csv"
+      STEP_SOURCETHUMB: "touchfile.txt.OK"
+      STEP_SFTP_DEST_THUMB: "touchfile1.txt.OK"
+      SFTP_USERNAME: "SECRETS.SFTPSERVICE.SFTP_USERNAME"
+      SFTP_PASSWORD: "SECRETS.SFTPSERVICE.SFTP_PASSWORD"
       RETRY: 3
-      SLEEP: 30
-      STEP_DESCRIPTION: "get a file from the remote sftp server"
+      SLEEP: 5
+UNZIPFOLDERFILES:
+      RUN: "unZipFolderFiles"
+      STEP_SOURCEDIR: "/src/usr/app/output"
+      STEP_CONTROL: "unZipIsDone"
+      STEP_CONTROLFILE: "csv.zip.UNZIPPED"
+      STEP_SOURCEFILE: "csv.zip"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "csv.zip"
+      RETRY: 3
+      SLEEP: 5
+MAKEQUERYONCSV2:
+      RUN: "makeQueryOnCSV2"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_SOURCEFILE: "AYTM.TO.MATERI.Z9.P221121.txt"
+      STEP_QUERY: "SELECT a.* WHERE a.Nmu_c1 == 1234"
+      STEP_JOINFILE: "output.csv"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "output1.csv"
+      RETRY: 3
+      SLEEP: 5
+ZIPFOLDERFILES:
+      RUN: "zipFolderFiles"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_SOURCEFILE: "/.csv$"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "Catalog_Brand%yyyyMMdd%.zip"
+WRITEINFOTOFILE:
+      RUN: "writeInfoToFile"
+      STEP_CONTROL: "verifyStep"
+      STEP_CONTROL_FLAG: "false"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@"
+      STEP_DESTINATIONFILE: "@DAILY_INFOFILE@"
+      STEP_INFOTEXT: "|
+              %dd-MM-yyyy hh:mm:ss% @FLOWNAME@ ESEGUITO CORRETTAMENTE"
+SENDMAIL:
+      RUN: "sendMail"
+      STEP_CONTROL: "verifyStep"
+      STEP_CONTROL_FLAG: "false"
+      STEP_MAIL_TO: "o1.rouhaim@reply.it, a1.altomare@reply.it"
+      STEP_MAIL_SUBJECT: "STARTED FLOW @FLOWNAME@"
+      MAILTEXT: "The flow @FLOWNAME@ already started"
+IMPORTTABLEFROMCSV:
+      RUN: "importTableFromCsv"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_TBLNAME: "persons"
+      STEP_TRUNCATETBL: "true"
+      STEP_CSVDELIMITER: ";"
+      STEP_SOURCEDIR: "/src/usr/app/output"
+      STEP_SOURCEFILE: "importTableFromCsv.csv"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "importTableFromCsv.csv.OK"
+EXECUTEQUERYONTABLE:
+      RUN: "executeQueryOnTable"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "executeQueryOnTable.csv"
+      STEP_QUERY: " >-
+              Select P.*, SUM(eta) over (PARTITION BY genere ORDER BY id) AS somma
+              from persons AS p"
+EXTRACTTABLEONCSV:
+      RUN: "extractTableOnCsv"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "extractTableOnCsv.csv"
+      STEP_TBLNAME: "persons"
 JWTGENERATION:
       RUN: "jwtGeneration"
       STEP_CONTROL: "destinationFileIsThere"
       STEP_DESTINATIONDIR: "@FLOWPATH@"
       STEP_DESTINATIONFILE: "jtwtoken.txt"
       STEP_JWTGEN:
-        PKFILE: "./keys/tim-ct-private-key-prod.pem"
-        PUBFILE: "./keys/tim-ct-public-key-prod.pem"
-        SHA1FP: "SECRETS.CT_SHA1FP"
+        PKFILE: "./keys/ct_cert_private.key"
+        PUBFILE: "./keys/ct_cert_public"
+        SHA1FP: "SECRETS.CT_SHA1FPDEV"
         payload:
-          prn: "ENV_@ENV@_USER"
+             prn: "ENV_@ENV@_USER"
         signOptions:
-          issuer: "Telecomitalia"
-          subject: "ENV_@ENV@_USER"
-          expiresIn: "24h"
-          algorithm: "RS256"
-          header:
-            x5t: "%X5T%"
-      STEP_DESCRIPTION: "generate a new json web token"
+             issuer: "Telecomitalia"
+             subject: "ENV_@ENV@_USER"
+             expiresIn: "24h"
+             algorithm: "RS256"
+             header:
+                  x5t: "%X5T%"
+CONTROLTOWERUPLOADCONTENT:
+      RUN: "controlTowerUploadContent"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_SOURCEDIR: "/src/usr/app/output"
+      STEP_SOURCEFILE: "TIMKPIONHM_mn_v2.txt"
+      STEP_OPERATION_NAME: "uploadFileToUCM"
+      STEP_DOCUMENT_ACCOUNT: "scm$/planningDataLoader$/import$"
+      STEP_FILE_EXTENTION: "txt"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "ctUploadResult%yyyyMMdd%.json"
+      RETRY: 5
+      SLEEP: 5
+CONTROLTOWERRUNESSJOB:
+      RUN: "controlTowerRunEssJob"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_SOURCEFILE: "ctUploadResult%yyyyMMdd%.json"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "essjobresult.json"
+      STEP_OPERATION_NAME: "submitESSJobRequest"
+      STEP_JOB_PACKAGE_NAME: "/oracle/apps/ess/custom/tim_mobile"
+      STEP_JOB_DEF_NAME: "TIM_GET_DOCUMENT_NAME"
+      RETRY: 2
+      SLEEP: 5
+CONTROLTOWERGETESSSTATUS:
+      RUN: "controlTowerGetEssStatus"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_SOURCEFILE: "essjobresult.json"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "essgetstatusresult.json"
+      STEP_OPERATION_NAME: "getESSJobStatus"
+      RETRY: 5
+      SLEEP: 30
+CONTROLTOWERDOWNLOADESSJOBEXECUTION:
+      RUN: "controlTowerDownloadEssJobExecution"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_SOURCEFILE: "essgetstatusresult.json"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "essjobexecutioncontent.zip"
+      STEP_OPERATION_NAME: "downloadESSJobExecutionDetails"
+      RETRY: 2
+      SLEEP: 5
+CONTROLTOWERIMPORTACTIVITIES:
+      RUN: "controlTowerImportActivities"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_SOURCEFILE: "essjobexecutioncontent.zip"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "ImportActivities.json"
+      STEP_REQUEST_NAME: "TIMKPIONHM_a"
+      STEP_REQUEST_DESC: "TIMKPIONHM_a"
+      STEP_OBJECT_CODE: "TIMMobileKPIOnHandNew_c"
+      RETRY: 2
+      SLEEP: 5
+CONTROLTOWERGETALLUSERS:
+      RUN: "controlTowerGetAllUsers"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_LOGDIR: "@FLOWPATH@"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/response"
+      STEP_DESTINATIONFILE: "getAllUsersResponse.json"
+GENERATEREQUESTCREATEEMPLOYEES:
+      RUN: "generateRequestCreateEmployees"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_SOURCEDIR_RESPONSE: "@FLOWSPATH@/response"
+      STEP_SOURCEFILE_IAM: "/retrieveUsersResponse.json"
+      STEP_SOURCEFILE_GETALLUSERS: "/getAllUsersResponse.json"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/request"
+      STEP_DESTINATIONFILE: "createEmployeesRequest.json"
+GENERATEREQUESTUPDATEUSERS:
+      RUN: "generateRequestUpdateUsers"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_SOURCEDIR: "@FLOWSPATH@/response"
+      STEP_SOURCEFILE_IAM: "/retrieveUsersResponse.json"
+      STEP_SOURCEFILE_GETALLUSERS: "/getAllUsersResponse.json"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/request"
+      STEP_DESTINATIONFILE: "updateUsersRequest.json"
+GENERATEREQUESTDELETEUSERS:
+      RUN: "generateRequestDeleteUsers"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_SOURCEDIR: "@FLOWSPATH@/response"
+      STEP_SOURCEFILE_IAM: "/retrieveUsersResponse.json"
+      STEP_SOURCEFILE_GETALLUSERS: "/getAllUsersResponse.json"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/request"
+      STEP_DESTINATIONFILE: "deleteUsersRequest.json"
+CONTROLTOWERUPDATEUSERS:
+      RUN: "controlTowerUpdateUsers"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_LOGDIR: "@FLOWPATH@"
+      STEP_SOURCEDIR: "@FLOWSPATH@/request"
+      STEP_SOURCEFILE: "updateUsersRequest.json"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/response"
+      STEP_DESTINATIONFILE: "updateUsersResponse.json"
+      RETRY: 2
+      SLEEP: 5
+CONTROLTOWERDELETEUSERS:
+      RUN: "controlTowerDeleteUsers"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_LOGDIR: "@FLOWPATH@"
+      STEP_SOURCEDIR: "@FLOWSPATH@/request"
+      STEP_SOURCEFILE: "deleteUsersRequest.json"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/response"
+      STEP_DESTINATIONFILE: "deleteUsersResponse.json"
+      RETRY: 2
+      SLEEP: 5
+CONTROLTOWERCREATEEMPLOYEES:
+      RUN: "controlTowerCreateEmployees"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_LOGDIR: "@FLOWPATH@"
+      STEP_SOURCEDIR: "@FLOWSPATH@/request"
+      STEP_SOURCEFILE: "createEmployeesRequest.json"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/response"
+      STEP_DESTINATIONFILE: "createEmployeesResponse.json"
+      RETRY: 2
+      SLEEP: 5
+CONTROLTOWERGETNEWUSERS:
+      RUN: "controlTowerGetNewUsers"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_LOGDIR: "@FLOWPATH@"
+      STEP_SOURCEDIR: "@FLOWSPATH@/response"
+      STEP_SOURCEFILE: "createEmployeesResponse.json"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/response"
+      STEP_DESTINATIONFILE: "getNewUsersResponse.json"
+      RETRY: 2
+      SLEEP: 5
+GENERATEREQUESTUPDATEROLES:
+      RUN: "generateRequestUpdateRoles"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_SOURCEDIR_RESPONSE: "@FLOWSPATH@/response"
+      STEP_SOURCEDIR_ROLELIST: "@ROOTPATH@"
+      STEP_SOURCEFILE_IAM: "/retrieveUsersResponse.json"
+      STEP_SOURCEFILE_GETALLUSERS: "/getAllUsersResponse.json"
+      STEP_SOURCEFILE_CREATEUSERS: "/getNewUsersResponse.json"
+      STEP_SOURCEFILE_ROLELIST: "/rolesList.json"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/request"
+      STEP_DESTINATIONFILE: "updateRolesRequest.json"
+CONTROLTOWERUPDATEROLE:
+      RUN: "controlTowerUpdateRole"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_LOGDIR: "@FLOWPATH@"
+      STEP_SOURCEDIR: "@FLOWSPATH@/request"
+      STEP_SOURCEFILE: "updateRolesRequest.json"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/response"
+      STEP_DESTINATIONFILE: "updateRolesResponse.json"
+      RETRY: 2
+      SLEEP: 5
+CONTROLTOWERGETESSSTATUSLOGINDATA:
+      RUN: "controlTowerGetEssStatusLoginData"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_SOURCEFILE: "essjobresultUpload.json"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "essgetstatusresultUpload.json"
+      STEP_OPERATION_NAME: "ESSJobStatusRF"
+      RETRY: 5
+      SLEEP: 30
+CONTROLTOWERDOWNLOADESSJOBEXECUTIONLOGINDATA:
+      RUN: "controlTowerDownloadEssJobExecutionLoginData"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_AUTH:
+        TYPE: "JWT"
+        JWT: "CT_AUTH_JWT"
+        JWT_DIR: "@FLOWPATH@"
+        JWT_FILE: "jtwtoken.txt"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_SOURCEFILE: "essgetstatusresultUpload.json"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "essjobexecutioncontentUpload.zip"
+      STEP_OPERATION_NAME: "ESSJobExecutionDetailsRF"
+      RETRY: 2
+      SLEEP: 5
+DELETEFILE:
+      RUN: "deleteFile"
+      STEP_CONTROL: "destinationFileIsMissing"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "jtwtoken.txt"
+CLEANZIP:
+      RUN: "cleanZip"
+      STEP_CONTROL: "destinationFileIsThere"
+      STEP_SOURCEDIR: "@FLOWPATH@"
+      STEP_SOURCEFILE: "essjobexecutioncontent.zip"
+      STEP_DESTINATIONDIR: "@FLOWPATH@"
+      STEP_DESTINATIONFILE: "CT2SAP%yyMMdd%.zip"
+      STEP_DESCRIPTION: "create empty file, at the end will be copied to SENT extension"
+      RETRY: 5
+      SLEEP: 5
+REMOVEREQUESTRESPONSEDIR:
+      RUN: "removeRequestResponseDir"
+      STEP_CONTROL: "verifyRemoveRequestResponseDir"
+      STEP_DESTINATIONDIR: "@FLOWSPATH@/request, @FLOWSPATH@/response"
