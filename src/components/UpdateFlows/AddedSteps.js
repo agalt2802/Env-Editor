@@ -21,15 +21,15 @@ function AddedSteps({
   setShow
 }) {
   if (flows[selectedFlow]) {
-    const flow = flows[selectedFlow];
+    // const flow = flows[selectedFlow];
 
-    const handleStepChange = (event) => {
-      setStepIndex(event.target.value); // indice dello step nel flow
-      setSelectedStep(flows[selectedFlow].STEPS[event.target.value]["RUN"]); // nome dello step selezionato
-      setShow(true)
-    };
+    // const handleStepChange = (event) => {
+    //   setStepIndex(event.target.value); // indice dello step nel flow
+    //   setSelectedStep(flows[selectedFlow].STEPS[event.target.value]["RUN"]); // nome dello step selezionato
+    //   setShow(true)
+    // };
 
-    const moveUp = (event, selectedIndex) => {
+    const moveUp = (selectedIndex) => {
       console.log(parseInt(selectedIndex) - 1)
       // modifichiamo la posizione dello step nel flow e poi sostituiamo il flow nell'elenco dei flows
       if (flows[selectedFlow].STEPS[parseInt(parseInt(selectedIndex)) - 1]) {
@@ -47,7 +47,7 @@ function AddedSteps({
       }
     };
   
-    const moveDown = (event, selectedIndex) => {
+    const moveDown = (selectedIndex) => {
       console.log(parseInt(parseInt(selectedIndex)) + 1)
       console.log(flows[selectedFlow].STEPS[parseInt(parseInt(selectedIndex)) + 1])
       if (flows[selectedFlow].STEPS[parseInt(parseInt(selectedIndex)) + 1]) {
@@ -70,13 +70,13 @@ function AddedSteps({
       }
     };
   
-    const deleteStep = (event, selectedIndex) => {
+    const deleteStep = (selectedIndex) => {
       let updatedFlows = {...flows}
       updatedFlows[selectedFlow].STEPS.splice(parseInt(selectedIndex), 1);
       setFlows(updatedFlows)
     };
   
-    const editStep = (event, selectedIndex) => {
+    const editStep = (selectedIndex) => {
     
       let stepToEdit = flows[selectedFlow].STEPS[parseInt(selectedIndex)].RUN.toLocaleUpperCase()  
       console.log("STEP TO EDIT: " + stepToEdit)  
@@ -102,7 +102,7 @@ function AddedSteps({
               variant="primary"
               className="button"
               onClick={() =>
-                moveUp(event, stepsKey)
+                moveUp(stepsKey)
               }
             >
               <FontAwesomeIcon icon={faArrowUp} />
@@ -113,7 +113,7 @@ function AddedSteps({
               variant="primary"
               className="button"
               onClick={() =>
-                moveDown(event, stepsKey)
+                moveDown(stepsKey)
               }
             >
               <FontAwesomeIcon icon={faArrowDown} />
@@ -123,7 +123,7 @@ function AddedSteps({
               variant="success"
               className="button"
               onClick={() =>
-                editStep(event, stepsKey)
+                editStep(stepsKey)
               }
             >
               <FontAwesomeIcon icon={faPenToSquare} />
@@ -133,7 +133,7 @@ function AddedSteps({
               variant="danger"
               className="button"
               onClick={() =>
-                deleteStep(event, stepsKey)
+                deleteStep(stepsKey)
               }
             >
               <FontAwesomeIcon icon={faTrash} />
