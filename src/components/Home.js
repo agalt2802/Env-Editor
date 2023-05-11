@@ -5,6 +5,8 @@ import UpdateFlows from "./UpdateFlows/UpdateFlows";
 import CreateCron from "./CreateCron/CreateCron"
 import EditCron from "./EditCron/EditCron";
 import ViewLogs from "./ViewLogs/ViewLogs";
+import DownloadButton from './DownloadButton';
+
 import { Container, Row, Col, Label, Input } from "reactstrap";
 import Nav from "react-bootstrap/Nav";
 
@@ -69,6 +71,9 @@ function Home() {
       : (
         <div className="home"></div>
       )}
+      </Row>
+      <Row>
+        <DownloadButton/>
       </Row>
     </Container>
   );
