@@ -126,3 +126,20 @@ app.post("/saveEditedCron", (req, res) => {
 
   res.send(fs.writeFileSync(serverConfig.CRONCONF_PATH, yaml.dump(envContent)));
 });
+
+app.get('/download/:filename', (req, res) => {
+ let filename = req.params.filename;
+ console.log(filename)
+  const filePath = "" +serverConfig[filename];
+  console.log(filePath)
+
+  if (fs.existsSync(filePath)) {
+    console.log("Entrato")
+
+    res.download(filePath);
+  } else {
+    console.log("Errore")
+
+    res.status(404).send('File not found');
+  }
+});
