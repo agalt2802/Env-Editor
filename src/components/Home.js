@@ -52,6 +52,9 @@ function Home() {
           <Nav.Item>
             <Nav.Link eventKey={"ViewLogs"}  >VIEW LOGS</Nav.Link>
           </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey={"DownloadUploadFile"}  >DOWNLOAD & UPLOAD FILES</Nav.Link>
+          </Nav.Item>
         </Nav>
       </Row>
       <Row>
@@ -67,13 +70,12 @@ function Home() {
         <EditCron/>
       ) : selectedComponent === "ViewLogs" ? (
         <ViewLogs/>
-      )  
+      ) : selectedComponent === "DownloadUploadFile" ? (
+        <DownloadButton />
+        )  
       : (
         <div className="home"></div>
       )}
-      </Row>
-      <Row>
-        <DownloadButton/>
       </Row>
     </Container>
   );
