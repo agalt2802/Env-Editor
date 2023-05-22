@@ -4,7 +4,8 @@ const http = require("http");
 const fs = require("fs");
 const yaml = require("js-yaml");
 const format = require("date-format");
-
+const path = require('path');
+const multer = require('multer');
 let PORT = 8081;
 let IP = "127.0.0.1";
 
@@ -143,3 +144,38 @@ app.get('/download/:filename', (req, res) => {
     res.status(404).send('File not found');
   }
 });
+
+
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage });
+
+app.post('/upload', upload.single('file'), (req, res) => {
+  const filePaths = [
+    serverConfig.COMMONS_PATH,
+    serverConfig.CRONCONF_PATH,
+    serverConfig.ENV_PATH,
+    serverConfig.STEPS_PATH,
+  ];
+  let filePath = filePaths.find(fp => path.basename(fp) === req.file.originalname);
+  if (filePath) {
+    const fileContents = fs.readFileSync(req.file.path, 'utf-8');
+    fs.writeFileSync(filePath,fileContents,{encoding:'utf8',flag:'w'})
+    fs.unlinkSync(req.file.path);
+
+    res.json({message: "File caricato con successo."});
+  } else {
+    fs.unlinkSync(req.file.path);
+    res.status(400).json({message: "File non permesso."});
+  }
+});
+

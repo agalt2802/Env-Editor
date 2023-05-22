@@ -6,6 +6,8 @@ import CreateCron from "./CreateCron/CreateCron"
 import EditCron from "./EditCron/EditCron";
 import ViewLogs from "./ViewLogs/ViewLogs";
 import DownloadButton from './DownloadButton';
+import FileUpload from './FileUpload';
+
 
 import { Container, Row, Col, Label, Input } from "reactstrap";
 import Nav from "react-bootstrap/Nav";
@@ -53,7 +55,10 @@ function Home() {
             <Nav.Link eventKey={"ViewLogs"}  >VIEW LOGS</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link eventKey={"DownloadUploadFile"}  >DOWNLOAD & UPLOAD FILES</Nav.Link>
+            <Nav.Link eventKey={"DownloadFile"}  >DOWNLOAD FILES</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey={"FileUpload"}  >UPLOAD FILES</Nav.Link>
           </Nav.Item>
         </Nav>
       </Row>
@@ -70,8 +75,10 @@ function Home() {
         <EditCron/>
       ) : selectedComponent === "ViewLogs" ? (
         <ViewLogs/>
-      ) : selectedComponent === "DownloadUploadFile" ? (
+      ) : selectedComponent === "DownloadFile" ? (
         <DownloadButton />
+        ) : selectedComponent === "FileUpload" ? (
+        <FileUpload />
         )  
       : (
         <div className="home"></div>
