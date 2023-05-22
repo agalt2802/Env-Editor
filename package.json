@@ -36,9 +36,8 @@
     "start:server": "node server/server.js",
     "start:react": "react-scripts start",    
     "build": "react-scripts build",
-    "test": "react-scripts test --coverage",
     "eject": "react-scripts eject",
-    "test:coverage": "jest --coverage"
+    "test": "react-scripts test --coverage"
   },
   "browserslist": {
     "production": [

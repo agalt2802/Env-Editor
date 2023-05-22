@@ -1,56 +1,64 @@
 import React from 'react';
-
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import fetchMock from 'jest-fetch-mock';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import DownloadButton from './DownloadButton';
-
-fetchMock.enableMocks();
-global.URL.createObjectURL = jest.fn();
-global.URL.revokeObjectURL = jest.fn();
-
-beforeEach(() => {
-  window.fetch.mockResolvedValueOnce({
-    ok: true,
-    blob: () => Promise.resolve(new Blob()),
+import '@testing-library/jest-dom/extend-expect';
+describe('DownloadButton', () => {
+  test('should render the component', () => {
+    render(<DownloadButton />);
+    expect(screen.getByText('Seleziona un file')).toBeInTheDocument();
+    expect(screen.getByRole('button')).toHaveTextContent('Scarica il file');
   });
-  global.URL.createObjectURL.mockReturnValue('blobUrl');
+
+  test('should enable the download button when a file is selected', () => {
+    render(<DownloadButton />);
+    const selectElement = screen.getByRole('combobox');
+    const downloadButton = screen.getByRole('button', { name: 'Scarica il file' });
+
+    expect(downloadButton).toBeDisabled();
+    fireEvent.change(selectElement, { target: { value: 'commons.yaml' } });
+    expect(downloadButton).toBeEnabled();
+  });
+
+  test('should download the selected file when the download button is clicked', async () => {
+    global.URL.createObjectURL = jest.fn();
+    global.URL.revokeObjectURL = jest.fn();
+
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: true,
+      blob: () => Promise.resolve(new Blob(['test file content'], { type: 'text/plain' })),
+    });
+
+    render(<DownloadButton />);
+    const selectElement = screen.getByRole('combobox');
+    const downloadButton = screen.getByRole('button', { name: 'Scarica il file' });
+
+    fireEvent.change(selectElement, { target: { value: 'commons.yaml' } });
+
+    fireEvent.click(downloadButton);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('http://127.0.0.1:8081/download/COMMONS_PATH');
+      expect(global.URL.createObjectURL).toHaveBeenCalled();
+      expect(global.URL.revokeObjectURL).toHaveBeenCalled();
+    });
+  });
+
+  test('should show an alert when there is an error downloading the file', async () => {
+    global.fetch = jest.fn().mockResolvedValueOnce({ ok: false });
+
+    global.alert = jest.fn();
+
+    render(<DownloadButton />);
+    const selectElement = screen.getByRole('combobox');
+    const downloadButton = screen.getByRole('button', { name: 'Scarica il file' });
+
+    fireEvent.change(selectElement, { target: { value: 'commons.yaml' } });
+
+    fireEvent.click(downloadButton);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('http://127.0.0.1:8081/download/COMMONS_PATH');
+      expect(global.alert).toHaveBeenCalledWith('Error downloading file');
+    });
+  });
 });
-
-afterEach(() => {
-  window.fetch.mockClear();
-  global.URL.createObjectURL.mockClear();
-});
-
-test('renders file list and the button is disabled initially', () => {
-  render(<DownloadButton />);
-
-  const select = screen.getByRole('combobox');
-  expect(select.value).toBe('');
-
-  const button = screen.getByRole('button', { name: /Scarica il file/i });
-  expect(button).toBeDisabled();
-});
-
-// test('button becomes enabled when a file is selected and initiates download on click', async () => {
-//   render(<DownloadButton />);
-
-//   const select = screen.getByRole('combobox');
-//   const button = screen.getByRole('button', { name: /Scarica il file/i });
-
-//   // Change selected file
-//   fireEvent.change(select, { target: { value: 'commons.yaml' } });
-
-//   // Verify that file is selected and button is enabled
-//   expect(select.value).toBe('commons.yaml');
-//   expect(button).toBeEnabled();
-
-//   // Click the button to download the file
-//   fireEvent.click(button);
-
-//   // Verify that fetch was called with the correct URL
-//   expect(window.fetch).toHaveBeenCalledWith('http://127.0.0.1:8081/download/COMMONS_PATH');
-
-//   // Verify that a blob URL was created
-//   expect(global.URL.createObjectURL).toHaveBeenCalledWith(new Blob());
-// });

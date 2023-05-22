@@ -22,7 +22,6 @@ function DownloadButton() {
     if (selectedFile) {
       const response = await fetch(`http://127.0.0.1:8081/download/${selectedFile.path}`);
       if (response.ok) {
-        console.log("Entro anche qui");   
         const url = URL.createObjectURL(await response.blob());
         const link = document.createElement('a');
         link.href = url;
