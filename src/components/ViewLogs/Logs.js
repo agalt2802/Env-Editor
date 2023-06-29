@@ -38,8 +38,8 @@ function Logs({ logs, setLogs, selectedDate }) {
                 <td>{logs[key].timeStamp}</td>
                 <td>{logs[key].flowName}</td>
                 <td>{logs[key].flowStep}</td>
-                <td>{logs[key].data}</td>
-              </tr>
+                <td>{logs[key].type !== 'ERROR' ? logs[key].data : logs[key].data.errorCode + " " + logs[key].data.errorMessage}</td>
+             </tr>
             ))}
           </tbody>
         </Table>
