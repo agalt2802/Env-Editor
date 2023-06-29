@@ -6,41 +6,38 @@ import {
   Button,
 } from "reactstrap";
 import { Modal } from "react-bootstrap";
+import { fetchWithCatch } from "../../commonFunctions";
 
 import CommonsDetails from "./CommonsDetails";
+
 function EditCommons() {
   const [commons, setCommons] = useState({});
   const [showSaveEdit, setShowSaveEdit] = useState(false)
 
   useEffect(() => {
-    async function fecthData() {
-      const response = await fetch("http://127.0.0.1:8081/commons").catch(
-        (error) => console.log(error)
-      );
-
-      const json = await response.json();
-      setCommons(json.COMMONS);
-    }
-    fecthData();
+      fetchWithCatch("/commons", {}, (res) => {
+        setCommons(res.COMMONS);
+      });
   }, []);
 
   const handleSaveEdit = () =>{
     setShowSaveEdit(true)
   }
 
-  const handleConfirmSaveEdit = () =>{
-    async function saveEdit() {
-      await fetch("http://127.0.0.1:8081/updateCommons", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(commons),
-      }).catch((error) => console.log(error));
+  const handleConfirmSaveEdit = async () => {
+    let params = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(commons),
+    };
+
+    fetchWithCatch("/updateCommons", params, (res) => {
       console.log("salva flusso");
-    }
-    saveEdit();
-    setShowSaveEdit(false)
+    
+      setShowSaveEdit(false);
+    });
   }
 
   return (

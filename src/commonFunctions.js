@@ -38,3 +38,25 @@ exports.replaceTodayIntoTheString = (instr) => {
     throw error;
   }
 };
+exports.fetchWithCatch = async (url, params, success, error, forceJSON = false) =>
+{
+  await fetch("http://127.0.0.1:8081"+url, params)
+  .then((response) => {
+    if(response.ok)
+    {
+      const contentType = response.headers.get("content-type");
+      let isJSON = (contentType && contentType.indexOf("application/json") !== -1);
+
+      return ((isJSON || forceJSON) ? response.json() : response.blob());
+    }
+    else
+    {
+      let error = new Error(response.statusText);
+      error.status = response.status;
+      
+      throw error;
+    }
+  })
+  .then(success)
+  .catch((error !== undefined) ? error : console.log);
+};

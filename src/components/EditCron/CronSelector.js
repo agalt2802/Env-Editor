@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Row, Label, Input } from "reactstrap";
+import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
@@ -12,14 +13,10 @@ function CronSelector({
   setScheduler,
 }) {
   useEffect(() => {
-    async function fecthCrons() {
-      const response = await fetch("http://127.0.0.1:8081/crons").catch(
-        (error) => console.log(error)
-      );
-      const json = await response.json();
-      setCrons(json.CRON_CONFS.CRONS);
-    }
-    fecthCrons();
+    if (Object.keys(crons).length === 0)
+      fetchWithCatch("/crons", {}, (json) => {
+        setCrons(json.CRON_CONFS.CRONS);
+      });
   }, [crons]);
 
   const handleCronChange = (event) => {

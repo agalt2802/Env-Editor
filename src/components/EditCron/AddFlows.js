@@ -4,6 +4,7 @@ import {
   Input,
   FormGroup,
 } from "reactstrap";
+import { fetchWithCatch } from "../../commonFunctions";
 
 
 import "semantic-ui-css/semantic.min.css";
@@ -11,18 +12,8 @@ import "semantic-ui-css/semantic.min.css";
 function AddFlow({crons, flows, setFlows, selectedFlow, setSelectedFlow, cronFlows, setCronFlows}) {
 
     useEffect(() => {
-        async function fecthData() {
-          const response = await fetch("http://127.0.0.1:8081/flows").catch(
-            (error) => console.log(error)
-          );
-    
-          const json = await response.json();
-    
-          console.log(json);
-          setFlows(json);
-          
-        }
-        if (Object.keys(flows).length === 0) fecthData();
+        if (Object.keys(flows).length === 0)
+          fetchWithCatch("/flows", {}, setFlows);
       }, [flows]);
 
     const handleFlowChange = (event) => {

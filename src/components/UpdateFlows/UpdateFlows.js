@@ -7,6 +7,7 @@ import AddStep from "./AddStep";
 import { Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faSquarePlus } from "@fortawesome/free-solid-svg-icons";
+import { fetchWithCatch } from "../../commonFunctions";
 
 function UpdateFlows() {
   const [flows, setFlows] = useState({});
@@ -23,15 +24,19 @@ function UpdateFlows() {
 
   const notEditableFileds = ["RUN", "STEP_CONTROL", "STEP_DESCRIPTION"];
 
-  async function saveData() {
-    await fetch("http://127.0.0.1:8081/updateFlows", {
+  function saveData(successCallback) {
+    let success = () => {
+      console.log("salva flusso");
+      
+      successCallback();
+    };
+    fetchWithCatch("/updateFlows", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(flows),
-    }).catch((error) => console.log(error));
-    console.log("salva flusso");
+    }, success);
   }
 
   const handleShowAddStep = () => {
@@ -44,8 +49,9 @@ function UpdateFlows() {
 
   const handleConfirmSaveEdit = () => {
     event.preventDefault();
-    saveData();
-    setShowSaveModal(false);
+    saveData(() => {
+      setShowSaveModal(false);
+    });
   };
 
   const handeleEdit = () => {
@@ -61,9 +67,10 @@ function UpdateFlows() {
   };
 
   const handleConfirmDelete = () => {
-    saveData();
-    setShowDeleteModal(false);
-    setSelectedFlow("");
+    saveData(() => {
+      setShowDeleteModal(false);
+      setSelectedFlow("");
+    });
   };
 
   return (

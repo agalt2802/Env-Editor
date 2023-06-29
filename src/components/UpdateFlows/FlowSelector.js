@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { FormGroup, Label, Input, Button } from "reactstrap";
 import "semantic-ui-css/semantic.min.css";
+import { fetchWithCatch } from "../../commonFunctions";
 
 function FlowSelector({
   flows,
@@ -11,18 +12,8 @@ function FlowSelector({
   setSelectedStep,
 }) {
   useEffect(() => {
-    async function fecthData() {
-      const response = await fetch("http://127.0.0.1:8081/flows").catch(
-        (error) => console.log(error)
-      );
-
-      const json = await response.json();
-
-      console.log(json);
-      setFlows(json);
-      
-    }
-    if (Object.keys(flows).length === 0) fecthData();
+    if (Object.keys(flows).length === 0)
+      fetchWithCatch("/flows", {}, setFlows);
   }, [flows]);
 
   const handleFlowChange = (event) => {

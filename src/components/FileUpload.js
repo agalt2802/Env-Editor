@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { fetchWithCatch } from "../commonFunctions";
 
 const FileUpload = () => {
   const [file, setFile] = useState(null);
@@ -10,13 +11,12 @@ const FileUpload = () => {
     const formData = new FormData();
     formData.append('file', file);
 
-    fetch('http://127.0.0.1:8081/upload', {
+    fetchWithCatch('/upload', {
       method: 'POST',
       body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => alert(data.message))
-      .catch((error) => alert("Si è verificato un errore durante l'upload del file"));
+    },
+    (data) => alert(data.message), 
+    (error) => alert("Si è verificato un errore durante l'upload del file"));
   };
 
   const handleFileUpload = (event) => {

@@ -8,6 +8,7 @@ import {
   Button,
   FormGroup,
 } from "reactstrap";
+import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
@@ -19,14 +20,10 @@ function CreateCron() {
 
   useEffect(() => {
     async function fecthData() {
-      const response = await fetch("http://127.0.0.1:8081/flows").catch(
-        (error) => console.log(error)
-      );
-
-      const json = await response.json();
-
-      console.log(json);
-      setFlows(json);
+      fetchWithCatch("/flows", {}, (json) => {
+        console.log(json);
+        setFlows(json);
+      });
     } if (Object.keys(flows).length === 0) fecthData();
   }, [flows]);
   
@@ -51,28 +48,27 @@ function CreateCron() {
   };
 
   const saveCron = (event) => {
-    async function saveData() {
-      let response = await fetch("http://127.0.0.1:8081/newCron", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          RUN: cronName,
-          INIT_SCHEDULER: scheduler,
-          INIT_FLOWS: flows,
-        }),
-      });
-
-      if (response.status === 500) {
-        return alert("cron with name " + cronName + " already exists!");
-      }
+    fetchWithCatch("/newCron", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        RUN: cronName,
+        INIT_SCHEDULER: scheduler,
+        INIT_FLOWS: flows,
+      }),
+    }, (res) => {
       console.log("salva flusso");
-    }
-    saveData();
-    setCronName("");
-    setScheduler("");
-    setFlows("");
+      
+      setCronName("");
+      setScheduler("");
+      setFlows("");
+    }, (e) => {
+      console.log(e);
+      if (e.status === 500)
+        return alert("cron with name " + cronName + " already exists!");
+    });
   };
 
   return (

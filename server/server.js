@@ -6,6 +6,7 @@ const yaml = require("js-yaml");
 const format = require("date-format");
 const path = require('path');
 const multer = require('multer');
+const e = require("express");
 let PORT = 8081;
 let IP = "127.0.0.1";
 const {replaceTodayIntoTheString} = require('../src/commonFunctions');
@@ -28,33 +29,49 @@ app.use((req, res, next) => {
 
 let serverConfig = yaml.load(fs.readFileSync("./server/serverConfig.yml"))
 
-app.get("/commons", (req, res) => {
+function requestHandler(req, res, callback, errorCallback)
+{
+  try
+  {
+    callback();
+  }
+  catch(e)
+  {
+    let errorMessage = "Internal server error: " + e.message;
+    if(errorCallback !== undefined)
+      errorMessage = errorCallback(e);
+    
+    res.status(500).send(e);
+  }
+}
+
+app.get("/commons", (req, res) => requestHandler(req, res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.COMMONS_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
-});
+}));
 
-app.get("/steps", (req, res) => {
+app.get("/steps", (req, res) => requestHandler(req, res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.STEPS_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
-});
+}));
 
-app.get("/flows", (req, res) => {
+app.get("/flows", (req, res) => requestHandler(req, res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.ENV_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
-});
+}));
 
-app.get("/crons", (req, res) => {
+app.get("/crons", (req, res) => requestHandler(req, res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
-});
+}));
 
-app.post("/updateCommons", (req, res) => {
+app.post("/updateCommons", (req, res) => requestHandler(req, res, () => {
   let env = fs.readFileSync(serverConfig.COMMONS_PATH);
   fs.writeFileSync(replaceTodayIntoTheString(serverConfig.COMMONS_BACKUP_PATH), env);
   res.send(fs.writeFileSync(serverConfig.COMMONS_PATH, yaml.dump(req.body)));
-});
+}));
 
-app.post("/getLogs", (req, res) => {
+app.post("/getLogs", (req, res) => requestHandler(req, res, () => {
   //req.body.date: giorno per cui sono richiesti i log
   console.log("REQ BODY DATE: " + req.body.date);
   let date = format("ddMMyyyy", new Date(req.body.date));
@@ -71,23 +88,23 @@ app.post("/getLogs", (req, res) => {
 
   console.log("LOGS: " + logs);
   res.send(logs);
-});
+}));
 
-app.post("/newFlow", (req, res) => {
+app.post("/newFlow", (req, res) => requestHandler(req, res, () => {
   let env = fs.readFileSync(serverConfig.ENV_PATH);
   fs.writeFileSync(replaceTodayIntoTheString(serverConfig.ENV_BACKUP_PATH), env);
   res.send(
     fs.appendFileSync(serverConfig.ENV_PATH, yaml.dump(req.body)) //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   );
-});
+}));
 
-app.post("/updateFlows", (req, res) => {
+app.post("/updateFlows", (req, res) => requestHandler(req, res, () => {
   let env = fs.readFileSync(serverConfig.ENV_PATH);
   fs.writeFileSync(replaceTodayIntoTheString(serverConfig.ENV_BACKUP_PATH), env);
   res.send(fs.writeFileSync(serverConfig.ENV_PATH, yaml.dump(req.body)));
-});
+}));
 
-app.post("/newCron", (req, res) => {
+app.post("/newCron", (req, res) => requestHandler(req, res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   let crons = [];
   envContent.CRON_CONFS.CRONS.forEach((element) => {
@@ -102,9 +119,9 @@ app.post("/newCron", (req, res) => {
     fs.writeFileSync(replaceTodayIntoTheString(serverConfig.CRONCONF_BACKUP_PATH), cron);
     res.send(fs.writeFileSync(serverConfig.CRONCONF_PATH, yaml.dump(envContent)));
   }
-});
+}));
 
-app.post("/saveEditedCron", (req, res) => {
+app.post("/saveEditedCron", (req, res) => requestHandler(req, res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
 
   console.log(req.body);
@@ -127,9 +144,9 @@ app.post("/saveEditedCron", (req, res) => {
   fs.writeFileSync(replaceTodayIntoTheString(serverConfig.CRONCONF_BACKUP_PATH) , cron);
 
   res.send(fs.writeFileSync(serverConfig.CRONCONF_PATH, yaml.dump(envContent)));
-});
+}));
 
-app.get('/download/:filename', (req, res) => {
+app.get('/download/:filename', (req, res) => requestHandler(req, res, () => {
  let filename = req.params.filename;
  console.log(filename)
   const filePath = "" +serverConfig[filename];
@@ -144,7 +161,7 @@ app.get('/download/:filename', (req, res) => {
 
     res.status(404).send('File not found');
   }
-});
+}));
 
 
 
@@ -160,7 +177,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post('/upload', upload.single('file'), (req, res) => requestHandler(req, res, () => {
   const filePaths = [
     serverConfig.COMMONS_PATH,
     serverConfig.CRONCONF_PATH,
@@ -178,5 +195,4 @@ app.post('/upload', upload.single('file'), (req, res) => {
     fs.unlinkSync(req.file.path);
     res.status(400).json({message: "File non permesso."});
   }
-});
-
+}));

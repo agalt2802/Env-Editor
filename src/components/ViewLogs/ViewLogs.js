@@ -3,6 +3,7 @@ import { Container, Row, Col, Label, Input } from "reactstrap";
 import { Modal, Button } from "react-bootstrap";
 
 import Logs from "./Logs";
+import { fetchWithCatch } from "../../commonFunctions";
 
 function ViewLogs() {
   const [selectedDate, setSelectedDate] = useState("");
@@ -19,26 +20,22 @@ function ViewLogs() {
       setLogs(false)
       setShowModal(true);
     } else {
-      async function getLogs() {
-        let response = await fetch("http://127.0.0.1:8081/getLogs", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ date: date }),
-        }).catch((error) => console.log(error));
-
-        const json = await response.json();
-        console.log("LOG OF " + date + ": " + JSON.stringify(json));
+      fetchWithCatch("/getLogs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ date: date }),
+      }, (json) => {
         setLogs(json);
+        console.log("LOGS: " + JSON.stringify(logs));  
 
-        if (!json) {
+        if(!json)
+        {
           setShowModal(true);
           setSelectedDate(date);
         }
-      }
-      getLogs();
-      console.log("LOGS: " + JSON.stringify(logs));
+      }, (e) => {}, true);
     }
   };
 

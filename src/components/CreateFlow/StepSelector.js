@@ -4,6 +4,7 @@ import {
   Label,
   Input,
 } from "reactstrap";
+import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
@@ -22,14 +23,8 @@ function StepSelector({steps, setSteps, selectedStep, setSelectedStep, stepIndex
   };
 
   useEffect(() => {
-    async function fecthData() {
-      const response = await fetch("http://127.0.0.1:8081/steps").catch(
-        (error) => console.log(error)
-      );
-      const json = await response.json();
-      setSteps(json);
-    }
-    if (Object.keys(steps).length === 0) fecthData();
+    if (Object.keys(steps).length === 0)
+      fetchWithCatch("/steps", {}, setSteps);
   }, [steps, setSteps]);
 
   return (

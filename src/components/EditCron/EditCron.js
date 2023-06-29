@@ -17,6 +17,7 @@ import CronSelector from "./CronSelector";
 import CronDetails from "./CronDetails";
 import AddFlows from "./AddFlows";
 import CronSchedule from "./CronSchedule";
+import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
@@ -41,25 +42,23 @@ function EditCron() {
   const handleConfirm = (event) =>{
     event.preventDefault()
     console.log("SELECTED CRON: " + selectedCron)
-    async function saveCron() {
-      await fetch("http://127.0.0.1:8081/saveEditedCron", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({RUN: selectedCron, INIT_SCHEDULER: scheduler, INIT_FLOWS: cronFlows}),
-      }).catch((error) => console.log(error));
+
+    fetchWithCatch("/saveEditedCron", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({RUN: selectedCron, INIT_SCHEDULER: scheduler, INIT_FLOWS: cronFlows}),
+    }, (res) => {
       console.log("salva flusso");
-    }
-    saveCron();
-    setCrons({})
-    setSelectedCron("")
-    setCronFlows([])
-    setFlows([])
-    setShowSaveModal(false)
-    setScheduler("")
-    
-    
+
+      setCrons({})
+      setSelectedCron("")
+      setCronFlows([])
+      setFlows([])
+      setShowSaveModal(false)
+      setScheduler("")
+    });
   }
 
   return (

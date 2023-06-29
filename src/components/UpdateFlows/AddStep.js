@@ -4,22 +4,14 @@ import {
   Input,
   FormGroup,
 } from "reactstrap";
+import { fetchWithCatch } from "../../commonFunctions";
 
 
 import "semantic-ui-css/semantic.min.css";
 
 function AddStep({flows, setFlows, selectedFlow, steps, setSteps, selectedStep, setSelectedStep}) {
     useEffect(() => {
-        async function fecthData() {
-          const response = await fetch("http://127.0.0.1:8081/steps").catch(
-            (error) => console.log(error)
-          );
-    
-          const json = await response.json();
-          setSteps(json);
-          
-        }
-        fecthData();
+      fetchWithCatch("/steps", {}, setSteps);
       }, [steps]);
 
       const handleSelectedStepToAdd = (event) => {

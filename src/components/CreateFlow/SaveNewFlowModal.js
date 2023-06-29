@@ -1,6 +1,7 @@
 import { Button } from "reactstrap";
 import { Modal } from "react-bootstrap";
 import React from 'react'
+import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
@@ -19,19 +20,18 @@ function SaveNewFlowModal({ show, setShow, inputValue, setInputValue, flow, setF
 
   const handleConfirm = (event) => {
     event.preventDefault()
-    async function saveData() {
-      await fetch("http://127.0.0.1:8081/newFlow", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(flow),
-      }).catch((error) => console.log(error));
+
+    fetchWithCatch("/newFlow", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(flow),
+    }, (res) => {
       console.log("salva flusso");
-    }
-    saveData();
-    setShow(false);
-    reset();
+      setShow(false);
+      reset();
+    });
   };
 
 

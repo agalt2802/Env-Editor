@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from 'reactstrap';
+import { fetchWithCatch } from "../commonFunctions";
 
 function DownloadButton() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -20,17 +21,17 @@ function DownloadButton() {
   const handleClick = async (e) => {
     e.preventDefault();
     if (selectedFile) {
-      const response = await fetch(`http://127.0.0.1:8081/download/${selectedFile.path}`);
-      if (response.ok) {
-        const url = URL.createObjectURL(await response.blob());
+      fetchWithCatch(`/download/${selectedFile.path}`, {}, (res) => {
+        const url = URL.createObjectURL(res);
         const link = document.createElement('a');
         link.href = url;
         link.download = selectedFile.name;
         link.click();
         URL.revokeObjectURL(url);
-      } else {
+      }, (e) => {
+        console.log(e);
         alert('Error downloading file');
-      }
+      });
     }
   };
 
