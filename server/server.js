@@ -8,6 +8,7 @@ const path = require('path');
 const multer = require('multer');
 let PORT = 8081;
 let IP = "127.0.0.1";
+const {replaceTodayIntoTheString} = require('../src/commonFunctions');
 
 let app = new express();
 http.createServer(app).listen(PORT, IP, () => {
@@ -49,7 +50,7 @@ app.get("/crons", (req, res) => {
 
 app.post("/updateCommons", (req, res) => {
   let env = fs.readFileSync(serverConfig.COMMONS_PATH);
-  fs.writeFileSync(serverConfig.COMMONS_BACKUP_PATH, env);
+  fs.writeFileSync(replaceTodayIntoTheString(serverConfig.COMMONS_BACKUP_PATH), env);
   res.send(fs.writeFileSync(serverConfig.COMMONS_PATH, yaml.dump(req.body)));
 });
 
@@ -74,7 +75,7 @@ app.post("/getLogs", (req, res) => {
 
 app.post("/newFlow", (req, res) => {
   let env = fs.readFileSync(serverConfig.ENV_PATH);
-  fs.writeFileSync(serverConfig.ENV_BACKUP_PATH, env);
+  fs.writeFileSync(replaceTodayIntoTheString(serverConfig.ENV_BACKUP_PATH), env);
   res.send(
     fs.appendFileSync(serverConfig.ENV_PATH, yaml.dump(req.body)) //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   );
@@ -82,7 +83,7 @@ app.post("/newFlow", (req, res) => {
 
 app.post("/updateFlows", (req, res) => {
   let env = fs.readFileSync(serverConfig.ENV_PATH);
-  fs.writeFileSync(serverConfig.ENV_BACKUP_PATH, env);
+  fs.writeFileSync(replaceTodayIntoTheString(serverConfig.ENV_BACKUP_PATH), env);
   res.send(fs.writeFileSync(serverConfig.ENV_PATH, yaml.dump(req.body)));
 });
 
@@ -98,7 +99,7 @@ app.post("/newCron", (req, res) => {
   } else {
     envContent.CRON_CONFS.CRONS.push(req.body);
     let cron = fs.readFileSync(serverConfig.CRONCONF_PATH);
-    fs.writeFileSync(serverConfig.CRONCONF_BACKUP_PATH, cron);
+    fs.writeFileSync(replaceTodayIntoTheString(serverConfig.CRONCONF_BACKUP_PATH), cron);
     res.send(fs.writeFileSync(serverConfig.CRONCONF_PATH, yaml.dump(envContent)));
   }
 });
@@ -123,7 +124,7 @@ app.post("/saveEditedCron", (req, res) => {
   console.log("Updated crons: " + JSON.stringify(envContent.CRON_CONFS.CRONS));
 
   let cron = fs.readFileSync(serverConfig.CRONCONF_PATH);
-  fs.writeFileSync(serverConfig.CRONCONF_BACKUP_PATH, cron);
+  fs.writeFileSync(replaceTodayIntoTheString(serverConfig.CRONCONF_BACKUP_PATH) , cron);
 
   res.send(fs.writeFileSync(serverConfig.CRONCONF_PATH, yaml.dump(envContent)));
 });

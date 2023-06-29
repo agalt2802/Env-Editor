@@ -22,7 +22,7 @@ COMMONS:
     subject: "@CMAILSUBJECT@"
     text: "@MAILTEXT@"
   STEP_SEPARATOR: "/"
-  LOG_FILE: "log.txt"
+  LOG_FILE: "log.json"
   FLOWPATH: "@FLOWSPATH@/@FLOWNAME@"
   CRONCONF_PATH: "./conf/cronConf.yml"
   FLOWS_PATH: "./conf/env.yml"
