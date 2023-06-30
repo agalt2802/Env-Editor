@@ -56,7 +56,7 @@ function CreateCron() {
       body: JSON.stringify({
         RUN: cronName,
         INIT_SCHEDULER: scheduler,
-        INIT_FLOWS: flows,
+        INIT_FLOWS: selectedFlows,
       }),
     }, (res) => {
       console.log("salva flusso");
