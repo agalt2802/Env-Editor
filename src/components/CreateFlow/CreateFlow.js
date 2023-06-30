@@ -13,13 +13,35 @@ function CreateFlow() {
   const [stepIndex, setStepIndex] = useState(-1);
   const [flow, setFlow] = useState({});
   const [inputValue, setInputValue] = useState("");
+  const [description, setDescription] = useState("");
   const [show, setShow] = useState(false)
   const [edit, setEdit] = useState(false);
-  const notEditableFileds = ["RUN", "STEP_CONTROL", "STEP_DESCRIPTION"];
+  const notEditableFileds = ["RUN", "STEP_CONTROL"];
 
-  const handleInputChange = (event, data) => {
-    setInputValue(event.target.value.toUpperCase());
+  const Fields = Object.freeze({ NAME: 0, DESCRIPTION: 1 });
+
+  const handleInputChange = (event, field) => {
+    let value = event.target.value;
+
+    switch(field)
+    {
+      case Fields.NAME:
+        setInputValue(value.toUpperCase());
+      break;
+      case Fields.DESCRIPTION:
+        setDescription(value);
+      break;
+    }
   };
+
+  const reset = () => {
+    setSteps({});
+    setFlow({});
+    setSelectedStep("-- Scegli uno step --");
+    setStepIndex(-1);
+    setInputValue("");
+    setDescription("");
+  }
 
   return (
     <Container id="mainContainer">
@@ -39,7 +61,22 @@ function CreateFlow() {
                 <Input
                   type="text"
                   value={inputValue}
-                  onChange={(event) => handleInputChange(event)}
+                  onChange={(event) => handleInputChange(event, Fields.NAME)}
+                  autoFocus={true}
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col className="flowConfigurator">
+              <div>
+                <Label>Descrizione flusso</Label>
+              </div>
+              <div className="d-flex justify-content-around">
+                <Input
+                  type="text"
+                  value={description}
+                  onChange={(event) => handleInputChange(event, Fields.DESCRIPTION)}
                   autoFocus={true}
                 />
               </div>
@@ -71,6 +108,7 @@ function CreateFlow() {
                   flow={flow}
                   setFlow={setFlow}
                   inputValue={inputValue}
+                  description={description}
                   notEditableFileds={notEditableFileds}
                   edit={edit}
                   setEdit={setEdit}
@@ -84,14 +122,9 @@ function CreateFlow() {
                 show={show}
                 setShow={setShow}
                 inputValue={inputValue}
-                setInputValue={setInputValue}
                 flow={flow}
-                setFlow={setFlow}
-                steps={steps}
-                setSteps={setSteps}
-                setSelectedStep={setSelectedStep}
-                setStepIndex={setStepIndex}
                 edit={edit}
+                reset={reset}
               />
             </Col>
           </Row>

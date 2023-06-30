@@ -10,6 +10,7 @@ function FlowSelector({
   setSelectedFlow,
   setStepIndex,
   setSelectedStep,
+  setDescription
 }) {
   useEffect(() => {
     if (Object.keys(flows).length === 0)
@@ -21,8 +22,11 @@ function FlowSelector({
     setSelectedFlow(event.target.value);
     setStepIndex(-1);
     setSelectedStep("-- Scegli uno step --");
-  };
 
+    let description = flows[event.target.value].DESCRIPTION;
+    setDescription((description === undefined ? "" : description));
+  };
+  
   return (
     <FormGroup>
       <Label>Seleziona Flusso:</Label>

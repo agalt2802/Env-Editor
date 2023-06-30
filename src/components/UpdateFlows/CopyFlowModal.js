@@ -5,19 +5,11 @@ import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
-function CopyFlowModal({ show, setShow, flow, setFlow, flows, setFlows, setSelectedFlow, setSteps, setSelectedStep, setStepIndex, edit}) {
+function CopyFlowModal({ show, setShow, flow, flows, setFlows, edit, reset }) {
   const [newFlowName, setNewFlowName] = useState(''); 
-  function reset() {
-    setSteps({});
-    setFlow({});
-    setSelectedStep("-- Scegli uno step --");
-    setStepIndex(-1);
-  }
 
   const handleConfirm = (event) => {
     event.preventDefault()
-
-    console.log("asdf", flows);
 
     let newFlow = {};
     newFlow[newFlowName] = flows[flow];
@@ -31,15 +23,11 @@ function CopyFlowModal({ show, setShow, flow, setFlow, flows, setFlows, setSelec
       body: JSON.stringify(newFlow),
     }, (res) => {
       setShow(false);
-      reset();
 
-      console.log(newFlow);
       flows[newFlowName] = newFlow[newFlowName];
-      console.log(flows[newFlowName]);
       setFlows(flows);
-      console.log(flows);
 
-      setSelectedFlow(newFlowName);
+      reset(newFlowName);
     });
   };
 
