@@ -8,6 +8,7 @@ import { Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../commonFunctions";
+import CopyFlowModal from "./CopyFlowModal";
 
 function UpdateFlows() {
   const [flows, setFlows] = useState({});
@@ -20,6 +21,7 @@ function UpdateFlows() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [steps, setSteps] = useState([]);
   const [edit, setEdit] = useState(false);
+  const [showCopyModal, setShowCopyModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const notEditableFileds = ["RUN", "STEP_CONTROL", "STEP_DESCRIPTION"];
@@ -58,6 +60,10 @@ function UpdateFlows() {
     setEdit(true);
   };
 
+  const handeleCopy = () => {
+    setShowCopyModal(true);
+  };
+
   const handleDelete = (event) => {
     console.log(flows);
     const updatedFlows = flows;
@@ -82,6 +88,24 @@ function UpdateFlows() {
       </Row>
       <Row>
         <Col>
+          <CopyFlowModal
+            show={showCopyModal}
+            setShow={setShowCopyModal}
+            flow={selectedFlow}
+            setFlow={setSelectedFlow}
+            flows={flows}
+            setFlows={setFlows}
+            setSelectedFlow={setSelectedFlow}
+            steps={steps}
+            setSteps={setSteps}
+            setSelectedStep={setSelectedStep}
+            setStepIndex={setStepIndex}
+            edit={edit}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
           <Row>
             <FlowSelector
               flows={flows}
@@ -102,6 +126,15 @@ function UpdateFlows() {
                   onClick={handeleEdit}
                 >
                   EDIT
+                </Button>
+                </Col>
+                <Col>
+                <Button
+                  color="success"
+                  className="button"
+                  onClick={handeleCopy}
+                >
+                  COPY
                 </Button>
                 </Col>
                 <Col>
