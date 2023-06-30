@@ -1,53 +1,53 @@
+import React from 'react';
 import { Row, FormGroup, Label, Input } from "reactstrap";
 
-function CommonsDetails({commons, setCommons }) {
-  const handleValueChange = (event, key) => {
-    const updatedCommons = {...commons};
-    console.log(event.target.value)
-    updatedCommons[key] = event.target.value;
+function CommonsDetails({ commons, setCommons }) {
+  const handleValueChange = (path, value) => {
+    let obj = {...commons};
+    let keys = path.split('.');
+    keys.reduce((o, k, i) => {
+      if (i === keys.length - 1) {
+        o[k] = value;
+      } else {
+        if (!o[k]) {
+          o[k] = {};
+        }
+      }
+      return o[k];
+    }, obj);
 
-    setCommons(updatedCommons);
+    setCommons(obj);
   };
 
-  const handleNestedValueChange = (event, key, key1) =>{
-    const updatedCommons = {...commons};
-    console.log(event.target.value)
-    updatedCommons[key][key1] = event.target.value;
+  const renderFormFields = (obj, parentKey = '') => {
+    return Object.keys(obj).map((key) => {
+      const path = parentKey ? `${parentKey}.${key}` : key;
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        return (
+          <div key={path}>
+            <Label><h3>{key}</h3></Label>
+            {renderFormFields(obj[key], path)}
+          </div>
+        )
+      }
 
-    setCommons(updatedCommons);
-
+      return (
+        <FormGroup key={path}>
+          <Label>{key}</Label>
+          <Input
+            type="text"
+            name={path}
+            value={obj[key] || ''}
+            onChange={(event) => handleValueChange(path, event.target.value)}
+          />
+        </FormGroup>
+      )
+    })
   }
 
   return (
     <Row>
-      {Object.keys(commons).map((key) => (
-        !(commons[key] instanceof Object) ?
-        <FormGroup key={key}>
-          <Label>{key}</Label>
-          <Input
-            type="text"
-            name={key}
-            value={commons[key]}
-            onChange={(event) => handleValueChange(event, key)}
-          />
-        </FormGroup>
-          :
-          <div>
-          <Label><h3>{key}</h3></Label>
-          {Object.keys(commons[key]).map((key1)=>(
-            <FormGroup key={key1}>
-            <Label>{key1}</Label>
-            <Input
-              type="text"
-              name={key1}
-              value={commons[key][key1]}
-              onChange={(event) => handleNestedValueChange(event, key, key1)}
-            />
-          </FormGroup>
-        ))}
-
-          </div> 
-      ))}
+      {renderFormFields(commons)}
     </Row>
   );
 }

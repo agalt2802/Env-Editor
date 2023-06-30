@@ -16,7 +16,7 @@ function EditCommons() {
 
   useEffect(() => {
       fetchWithCatch("/commons", {}, (res) => {
-        setCommons(res.COMMONS);
+        setCommons(res);
       });
   }, []);
 
