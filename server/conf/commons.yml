@@ -5,29 +5,58 @@ COMMONS:
   ENV: DEV
   CLOUD: true
   BASE_PATH_ENV_DEV: https://fa-evbd-dev1-saasfaprod1.fa.ocs.oraclecloud.com
-  # BASE_PATH_ENV_PROD: https://fa-evbd-saasfaprod1.fa.ocs.oraclecloud.com
   ENV_DEV_USER: GCP_INTEGRATION2
-  # ENV_PROD_USER: GCP_INTEGRATION2
-  SFTP_PORT: "22"
-  SFTP_HOST: "192.168.0.92"
-  SFTP_TIMEOUT: "3"
+  SFTP_PORT: '22'
+  SFTP_HOST: 192.168.0.92
+  SFTP_TIMEOUT: '3'
   ALERT:
-    CMAILSUBJECT: "@CNAME@ - @FLOWNAME@ - %ddMMyyyy%"
-    CNAME: "CONTROL TOWER DATA TRANSFER"
-    CMAILDEST: "o.rouhaim@reply.it, a.altomare@reply.it"
-    SFTP_CMAILDEST: "user@gmail.com"
-    MAILTEXT: "Attenzione il flusso @FLOWNAME@ è andato in errore per il seguente motivo:\n @ERRORSTATUS@: @ERRORMESSAGE@.\nPer altri dettagli visionare il file:\n @ERRORFILE@."
+    CMAILSUBJECT: '@CNAME@ - @FLOWNAME@ - %ddMMyyyy%'
+    CNAME: CONTROL TOWER DATA TRANSFER
+    CMAILDEST: o.rouhaim@reply.it, a.altomare@reply.it
+    SFTP_CMAILDEST: user@gmail.com
+    MAILTEXT: |-
+      Attenzione il flusso @FLOWNAME@ è andato in errore per il seguente motivo:
+      @ERRORSTATUS@: @ERRORMESSAGE@.
+      Per altri dettagli visionare il file:
+      @ERRORFILE@.
   MAILINFO:
-    to: "@CMAILDEST@"
-    subject: "@CMAILSUBJECT@"
-    text: "@MAILTEXT@"
-  STEP_SEPARATOR: "/"
-  LOG_FILE: "log.json"
-  FLOWPATH: "@FLOWSPATH@/@FLOWNAME@"
-  CRONCONF_PATH: "./conf/cronConf.yml"
-  FLOWS_PATH: "./conf/env.yml"
-  COMMONS_PATH: "./conf/commons.yml"
-  ROLES_LIST_PATH: "./conf"
-  SECRETS: "./conf/.secrets.yml"
-  CLOUDFUNCTION_URL: "http://host.minikube.internal:5001/ctflows-45202/us-central1/genericFirebaseController"
-  # CLOUDFUNCTION_URL: "http://127.0.0.1:5001/ctflows-45202/us-central1/genericFirebaseController"
+    to: '@CMAILDEST@'
+    subject: '@CMAILSUBJECT@'
+    text: '@MAILTEXT@'
+  STEP_SEPARATOR: /
+  LOG_FILE: log.json
+  FLOWPATH: '@FLOWSPATH@/@FLOWNAME@'
+  CRONCONF_PATH: ./conf/cronConf.yml
+  FLOWS_PATH: ./conf/env.yml
+  COMMONS_PATH: ./conf/commons.yml
+  ROLES_LIST_PATH: ./conf
+  SECRETS: ./conf/.secrets.yml
+  CLOUDFUNCTION_URL: >-
+    http://host.minikube.internal:5001/ctflows-45202/us-central1/genericFirebaseController
+  JWTGENS:
+    PROD:
+      PKFILE: ./keys/tim-ct-private-key-prod.pem
+      PUBFILE: ./keys/tim-ct-public-key-prod.pem
+      SHA1FP: SECRETS.CT_SHA1FP
+      payload:
+        prn: ENV_@ENV@_USER
+      signOptions:
+        issuer: Telecomitalia
+        subject: ENV_@ENV@_USER
+        expiresIn: 24h
+        algorithm: RS256
+        header:
+          x5t: '%X5T%'
+    DEV:
+      PKFILE: ./keys/ct_cert_private.key
+      PUBFILE: ./keys/ct_cert_public
+      SHA1FP: SECRETS.CT_SHA1FPDEV
+      payload:
+        prn: ENV_@ENV@_USER
+      signOptions:
+        issuer: Telecomitalia
+        subject: ENV_@ENV@_USER
+        expiresIn: 24h
+        algorithm: RS256
+        header:
+          x5t: '%X5T%'
