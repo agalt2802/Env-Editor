@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Button } from "reactstrap";
+import { Container, Row, Col, Button, Label, Input } from "reactstrap";
 import SelectedStepDetails from "./SelectedStepDetails";
 import FlowSelector from "./FlowSelector";
 import AddedSteps from "./AddedSteps";
@@ -13,6 +13,7 @@ import CopyFlowModal from "./CopyFlowModal";
 function UpdateFlows() {
   const [flows, setFlows] = useState({});
   const [selectedFlow, setSelectedFlow] = useState("");
+  const [description, setDescription] = useState("");
   const [stepIndex, setStepIndex] = useState(-1);
   const [selectedStep, setSelectedStep] = useState("-- Scegli uno step --");
   const [show, setShow] = useState(true);
@@ -51,6 +52,7 @@ function UpdateFlows() {
 
   const handleConfirmSaveEdit = () => {
     event.preventDefault();
+    flows[selectedFlow].DESCRIPTION = description;
     saveData(() => {
       setShowSaveModal(false);
     });
@@ -79,6 +81,19 @@ function UpdateFlows() {
     });
   };
 
+  const reset = (newFlow) => {
+    setSteps({});
+    setSelectedFlow(newFlow);
+    setSelectedStep("-- Scegli uno step --");
+    setStepIndex(-1);
+  };
+
+  const handleInputChange = (event) => {
+    let value = event.target.value;
+    
+    setDescription(value);
+  };
+
   return (
     <Container>
       <Row>
@@ -92,15 +107,10 @@ function UpdateFlows() {
             show={showCopyModal}
             setShow={setShowCopyModal}
             flow={selectedFlow}
-            setFlow={setSelectedFlow}
             flows={flows}
             setFlows={setFlows}
-            setSelectedFlow={setSelectedFlow}
-            steps={steps}
-            setSteps={setSteps}
-            setSelectedStep={setSelectedStep}
-            setStepIndex={setStepIndex}
             edit={edit}
+            reset={reset}
           />
         </Col>
       </Row>
@@ -114,7 +124,24 @@ function UpdateFlows() {
               setSelectedFlow={setSelectedFlow}
               setStepIndex={setStepIndex}
               setSelectedStep={setSelectedStep}
+              setDescription={setDescription}
             />
+          </Row>
+          <Row>
+            <Col className="flowConfigurator">
+              <div>
+                <Label>Descrizione flusso</Label>
+              </div>
+              <div className="d-flex justify-content-around">
+                <Input
+                  type="textarea"
+                  value={description}
+                  onChange={(event) => handleInputChange(event)}
+                  autoFocus={true}
+                  disabled={!edit}
+                />
+              </div>
+            </Col>
           </Row>
           {!edit &&
             selectedFlow != "" && ( // manca da risettare edit per tornare all'inizio

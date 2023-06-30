@@ -38,7 +38,7 @@ exports.replaceTodayIntoTheString = (instr) => {
     throw error;
   }
 };
-exports.fetchWithCatch = async (url, params, success, error, forceJSON = false) =>
+export async function fetchWithCatch(url, params, success, error, forceJSON = false)
 {
   await fetch("http://127.0.0.1:8081"+url, params)
   .then((response) => {

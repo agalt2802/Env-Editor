@@ -5,15 +5,7 @@ import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
-function SaveNewFlowModal({ show, setShow, inputValue, setInputValue, flow, setFlow, setSteps, setSelectedStep, setStepIndex, edit}) {
-    function reset() {
-    setSteps({});
-    setFlow({});
-    setSelectedStep("-- Scegli uno step --");
-    setStepIndex(-1);
-    setInputValue("");
-  }
-
+function SaveNewFlowModal({ show, setShow, inputValue, flow, edit, reset }) {
   const handleShow = () => {
     setShow(true);
   };

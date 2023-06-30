@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 
 let serverConfig = yaml.load(fs.readFileSync("./server/serverConfig.yml"))
 
-function requestHandler(req, res, callback, errorCallback)
+function requestHandler(res, callback, errorCallback)
 {
   try
   {
@@ -45,33 +45,33 @@ function requestHandler(req, res, callback, errorCallback)
   }
 }
 
-app.get("/commons", (req, res) => requestHandler(req, res, () => {
+app.get("/commons", (req, res) => requestHandler(res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.COMMONS_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
 }));
 
-app.get("/steps", (req, res) => requestHandler(req, res, () => {
+app.get("/steps", (req, res) => requestHandler(res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.STEPS_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
 }));
 
-app.get("/flows", (req, res) => requestHandler(req, res, () => {
+app.get("/flows", (req, res) => requestHandler(res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.ENV_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
 }));
 
-app.get("/crons", (req, res) => requestHandler(req, res, () => {
+app.get("/crons", (req, res) => requestHandler(res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   res.send(envContent);
 }));
 
-app.post("/updateCommons", (req, res) => requestHandler(req, res, () => {
+app.post("/updateCommons", (req, res) => requestHandler(res, () => {
   let env = fs.readFileSync(serverConfig.COMMONS_PATH);
   fs.writeFileSync(replaceTodayIntoTheString(serverConfig.COMMONS_BACKUP_PATH), env);
   res.send(fs.writeFileSync(serverConfig.COMMONS_PATH, yaml.dump(req.body)));
 }));
 
-app.post("/getLogs", (req, res) => requestHandler(req, res, () => {
+app.post("/getLogs", (req, res) => requestHandler(res, () => {
   //req.body.date: giorno per cui sono richiesti i log
   console.log("REQ BODY DATE: " + req.body.date);
   let date = format("ddMMyyyy", new Date(req.body.date));
@@ -90,7 +90,7 @@ app.post("/getLogs", (req, res) => requestHandler(req, res, () => {
   res.send(logs);
 }));
 
-app.post("/newFlow", (req, res) => requestHandler(req, res, () => {
+app.post("/newFlow", (req, res) => requestHandler(res, () => {
   let env = fs.readFileSync(serverConfig.ENV_PATH);
   fs.writeFileSync(replaceTodayIntoTheString(serverConfig.ENV_BACKUP_PATH), env);
   res.send(
@@ -98,13 +98,13 @@ app.post("/newFlow", (req, res) => requestHandler(req, res, () => {
   );
 }));
 
-app.post("/updateFlows", (req, res) => requestHandler(req, res, () => {
+app.post("/updateFlows", (req, res) => requestHandler(res, () => {
   let env = fs.readFileSync(serverConfig.ENV_PATH);
   fs.writeFileSync(replaceTodayIntoTheString(serverConfig.ENV_BACKUP_PATH), env);
   res.send(fs.writeFileSync(serverConfig.ENV_PATH, yaml.dump(req.body)));
 }));
 
-app.post("/newCron", (req, res) => requestHandler(req, res, () => {
+app.post("/newCron", (req, res) => requestHandler(res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
   let crons = [];
   envContent.CRON_CONFS.CRONS.forEach((element) => {
@@ -121,7 +121,7 @@ app.post("/newCron", (req, res) => requestHandler(req, res, () => {
   }
 }));
 
-app.post("/saveEditedCron", (req, res) => requestHandler(req, res, () => {
+app.post("/saveEditedCron", (req, res) => requestHandler(res, () => {
   let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
 
   console.log(req.body);
@@ -146,7 +146,7 @@ app.post("/saveEditedCron", (req, res) => requestHandler(req, res, () => {
   res.send(fs.writeFileSync(serverConfig.CRONCONF_PATH, yaml.dump(envContent)));
 }));
 
-app.get('/download/:filename', (req, res) => requestHandler(req, res, () => {
+app.get('/download/:filename', (req, res) => requestHandler(res, () => {
  let filename = req.params.filename;
  console.log(filename)
   const filePath = "" +serverConfig[filename];
@@ -177,7 +177,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.post('/upload', upload.single('file'), (req, res) => requestHandler(req, res, () => {
+app.post('/upload', upload.single('file'), (req, res) => requestHandler(res, () => {
   const filePaths = [
     serverConfig.COMMONS_PATH,
     serverConfig.CRONCONF_PATH,

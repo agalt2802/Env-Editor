@@ -18,6 +18,7 @@ function StepDetails({
   flow,
   setFlow,
   inputValue,
+  description,
   notEditableFileds,
   edit,
   setEdit
@@ -67,6 +68,10 @@ function StepDetails({
 
     if (updatedFlow[inputValue].NAME === undefined) {
       updatedFlow[inputValue].NAME = inputValue;
+    }
+
+    if (updatedFlow[inputValue].DESCRIPTION === undefined) {
+      updatedFlow[inputValue].DESCRIPTION = description;
     }
 
     if (updatedFlow[inputValue].STEPS === undefined) {
