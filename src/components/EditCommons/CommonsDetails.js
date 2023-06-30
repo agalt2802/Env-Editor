@@ -10,7 +10,7 @@ function CommonsDetails({ commons, setCommons }) {
       convertedValue = false;
     } else if (value === "null") {
       convertedValue = null;
-    } else if (!isNaN(Number(value))) {
+    } else if (value !== '' && isFinite(value) && value.indexOf('.') === -1 && value.indexOf(' ') === -1) {
       convertedValue = Number(value);
     } else {
       convertedValue = value;

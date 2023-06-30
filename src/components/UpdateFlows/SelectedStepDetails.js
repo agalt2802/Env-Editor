@@ -1,70 +1,80 @@
 import {
-    FormGroup,
-    Label,
-    Input,
-    Button,
-  } from "reactstrap";
-  import React from 'react'
-  import "semantic-ui-css/semantic.min.css";
-  import { Modal } from "react-bootstrap";
-  
-  function SelectedStepDetails({
-    flows,
-    setFlows,
-    selectedFlow,
-    setSelectedFlow,
-    stepIndex,
-    setStepIndex,
-    notEditableFileds,
-    setShow,
-    showModal,
-    setShowModal
-  }) {
+  FormGroup,
+  Label,
+  Input,
+  Button,
+} from "reactstrap";
+import React from 'react'
+import "semantic-ui-css/semantic.min.css";
+import { Modal } from "react-bootstrap";
 
-    if (stepIndex === -1) return null;
-    let step = flows[selectedFlow].STEPS[stepIndex]
-    
-    const handleValueChange = (event, key) => {
-        console.log("KEY: " + key)
-        const updatedFlows = {...flows}
-        updatedFlows[selectedFlow].STEPS[stepIndex][key] = event.target.value
-        setFlows(updatedFlows)
-    };
+function SelectedStepDetails({
+  flows,
+  setFlows,
+  selectedFlow,
+  setSelectedFlow,
+  stepIndex,
+  setStepIndex,
+  notEditableFileds,
+  setShow,
+  showModal,
+  setShowModal
+}) {
+  if (stepIndex === -1) return null;
+  let step = flows[selectedFlow].STEPS[stepIndex]
 
-    const handleNestedValueChange = (event, key, key1) =>{
-      console.log("KEY: " + key)
-        const updatedFlows = {...flows}
-        updatedFlows[selectedFlow].STEPS[stepIndex][key][key1] = event.target.value
-        setFlows(updatedFlows)
-  
+  const convertValue = (value) => {
+    let convertedValue = value;
+
+    if (value === "true") {
+      convertedValue = true;
+    } else if (value === "false") {
+      convertedValue = false;
+    } else if (value === "null") {
+      convertedValue = null;
+    } else if (value !== '' && isFinite(value) && value.indexOf('.') === -1 && value.indexOf(' ') === -1) {
+      convertedValue = Number(value);
+    } else {
+      convertedValue = value;
     }
 
-    
-    const handleNestedX2ValueChange = (event, key, key1, key2) =>{
-      console.log("KEY: " + key)
-        const updatedFlows = {...flows}
-        updatedFlows[selectedFlow].STEPS[stepIndex][key][key1][key2] = event.target.value
-        setFlows(updatedFlows)
-  
-    }
+    return convertedValue;
+  }
 
-    const handleNestedX3ValueChange = (event, key, key1, key2, key3) =>{
-      console.log("KEY: " + key)
-        const updatedFlows = {...flows}
-        updatedFlows[selectedFlow].STEPS[stepIndex][key][key1][key2][key3] = event.target.value
-        setFlows(updatedFlows)
-  
-    }
+  const handleValueChange = (event, key) => {
+    const value = convertValue(event.target.value);
+    const updatedFlows = {...flows}
+    updatedFlows[selectedFlow].STEPS[stepIndex][key] = value;
+    setFlows(updatedFlows);
+  };
 
+  const handleNestedValueChange = (event, key, key1) => {
+    const value = convertValue(event.target.value);
+    const updatedFlows = {...flows}
+    updatedFlows[selectedFlow].STEPS[stepIndex][key][key1] = value;
+    setFlows(updatedFlows);
+  };
 
+  const handleNestedX2ValueChange = (event, key, key1, key2) => {
+    const value = convertValue(event.target.value);
+    const updatedFlows = {...flows}
+    updatedFlows[selectedFlow].STEPS[stepIndex][key][key1][key2] = value;
+    setFlows(updatedFlows);
+  };
 
-    const handleConfirm = () =>{
-      setShowModal(false)
-      setShow(false)
-      setStepIndex("-1")
-      setSelectedFlow("")
-    }
-  
+  const handleNestedX3ValueChange = (event, key, key1, key2, key3) => {
+    const value = convertValue(event.target.value);
+    const updatedFlows = {...flows}
+    updatedFlows[selectedFlow].STEPS[stepIndex][key][key1][key2][key3] = value;
+    setFlows(updatedFlows);
+  };
+
+  const handleConfirm = () => {
+    setShowModal(false);
+    setShow(false);
+    setStepIndex("-1");
+    setSelectedFlow("");
+  }
     return (
       <div>
         <h2> STEP: {step.RUN.toLocaleUpperCase()}</h2>
