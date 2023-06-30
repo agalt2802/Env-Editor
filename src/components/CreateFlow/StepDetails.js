@@ -26,17 +26,36 @@ function StepDetails({
   if (stepIndex === -1) return null; // QUESTO CONTROLLA SE è STATO SELEZIONATO UNO STEP
   const step = steps[selectedStep];
 
+  const convertValue = (value) => {
+    let convertedValue = value;
+
+    if (value === "true") {
+      convertedValue = true;
+    } else if (value === "false") {
+      convertedValue = false;
+    } else if (value === "null") {
+      convertedValue = null;
+    } else if (value !== '' && isFinite(value) && value.indexOf('.') === -1 && value.indexOf(' ') === -1) {
+      convertedValue = Number(value);
+    } else {
+      convertedValue = value;
+    }
+
+    return convertedValue;
+  }
+
   const handleValueChange = (event, key) => {
+    const value = convertValue(event.target.value);
     const updatedSteps = { ...steps };
-    updatedSteps[selectedStep][key] = event.target.value;
+    updatedSteps[selectedStep][key] = value;
     setSteps(updatedSteps);
   };
 
   const handleNestedValueChange = (event, key, key1) =>{
+    const value = convertValue(event.target.value);
     const updatedSteps = { ...steps };
-    updatedSteps[selectedStep][key][key1] = event.target.value;
+    updatedSteps[selectedStep][key][key1] = value;
     setSteps(updatedSteps);
-
   }
 
   const handleAddStep = (event) => {
@@ -62,13 +81,12 @@ function StepDetails({
     setSelectedStep("-- Scegli uno step --");
   };
 
-
   const handleEditStep = (event) => {
     const updatedFlow = { ...flow };
     console.log(updatedFlow);
 
-    let indexOfSTepToEdit = updatedFlow[inputValue].STEPS.indexOf(selectedStep) 
-    updatedFlow[inputValue].STEPS.slice(indexOfSTepToEdit, 1, steps[selectedStep] )
+    let indexOfStepToEdit = updatedFlow[inputValue].STEPS.indexOf(selectedStep) 
+    updatedFlow[inputValue].STEPS.splice(indexOfStepToEdit, 1, steps[selectedStep])
 
     setFlow(updatedFlow);
     setStepIndex(-1);
@@ -131,8 +149,6 @@ function StepDetails({
     </div>
       }
     </div>
-
-    
   );
 }
 
