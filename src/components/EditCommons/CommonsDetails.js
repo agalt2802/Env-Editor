@@ -19,20 +19,20 @@ function CommonsDetails({ commons, setCommons }) {
     setCommons(obj);
   };
 
-  const renderFormFields = (obj, parentKey = '') => {
+  const renderFormFields = (obj, parentKey = '', level = 0) => {
     return Object.keys(obj).map((key) => {
       const path = parentKey ? `${parentKey}.${key}` : key;
       if (typeof obj[key] === 'object' && obj[key] !== null) {
         return (
-          <div key={path}>
+          <div key={path} style={{ paddingLeft: `${level * 20}px` }}>
             <Label><h3>{key}</h3></Label>
-            {renderFormFields(obj[key], path)}
+            {renderFormFields(obj[key], path, level + 1)}
           </div>
         )
       }
 
       return (
-        <FormGroup key={path}>
+        <FormGroup key={path} style={{ paddingLeft: `${level * 20}px` }}>
           <Label>{key}</Label>
           <Input
             type="text"
