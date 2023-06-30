@@ -1,13 +1,26 @@
-import React from 'react';
+import React from "react";
 import { Row, FormGroup, Label, Input } from "reactstrap";
 
 function CommonsDetails({ commons, setCommons }) {
   const handleValueChange = (path, value) => {
-    let obj = {...commons};
-    let keys = path.split('.');
+    let convertedValue;
+    if (value === "true") {
+      convertedValue = true;
+    } else if (value === "false") {
+      convertedValue = false;
+    } else if (value === "null") {
+      convertedValue = null;
+    } else if (!isNaN(Number(value))) {
+      convertedValue = Number(value);
+    } else {
+      convertedValue = value;
+    }
+
+    let obj = { ...commons };
+    let keys = path.split(".");
     keys.reduce((o, k, i) => {
       if (i === keys.length - 1) {
-        o[k] = value;
+        o[k] = convertedValue;
       } else {
         if (!o[k]) {
           o[k] = {};
@@ -19,16 +32,18 @@ function CommonsDetails({ commons, setCommons }) {
     setCommons(obj);
   };
 
-  const renderFormFields = (obj, parentKey = '', level = 0) => {
+  const renderFormFields = (obj, parentKey = "", level = 0) => {
     return Object.keys(obj).map((key) => {
       const path = parentKey ? `${parentKey}.${key}` : key;
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
+      if (typeof obj[key] === "object" && obj[key] !== null) {
         return (
           <div key={path} style={{ paddingLeft: `${level * 20}px` }}>
-            <Label><h3>{key}</h3></Label>
+            <Label>
+              <h3>{key}</h3>
+            </Label>
             {renderFormFields(obj[key], path, level + 1)}
           </div>
-        )
+        );
       }
 
       return (
@@ -37,19 +52,21 @@ function CommonsDetails({ commons, setCommons }) {
           <Input
             type="text"
             name={path}
-            value={obj[key] || ''}
+            value={
+              obj[key] === true
+                ? "true"
+                : obj[key] === false
+                ? "false"
+                : obj[key] || ""
+            }
             onChange={(event) => handleValueChange(path, event.target.value)}
           />
         </FormGroup>
-      )
-    })
-  }
+      );
+    });
+  };
 
-  return (
-    <Row>
-      {renderFormFields(commons)}
-    </Row>
-  );
+  return <Row>{renderFormFields(commons)}</Row>;
 }
 
 export default CommonsDetails;
