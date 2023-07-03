@@ -74,7 +74,7 @@ function CreateFlow() {
               </div>
               <div className="d-flex justify-content-around">
                 <Input
-                  type="text"
+                  type="textarea"
                   value={description}
                   onChange={(event) => handleInputChange(event, Fields.DESCRIPTION)}
                   autoFocus={true}

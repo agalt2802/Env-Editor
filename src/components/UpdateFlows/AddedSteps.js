@@ -96,7 +96,7 @@ function AddedSteps({
           <Card key={stepsKey} className="cardContent">
             <Card.Body>
             <Card.Title>{flows[selectedFlow].STEPS[stepsKey].RUN.toLocaleUpperCase()}</Card.Title>
-            {/* <Card.Text>{flow[stepsKey]["STEP_DESCRIPTION"]}</Card.Text> */}
+            <Card.Text>{flows[selectedFlow].STEPS[stepsKey].STEP_DESCRIPTION}</Card.Text>
             {flows[selectedFlow].STEPS.length > 1 && flows[selectedFlow].STEPS.indexOf(flows[selectedFlow].STEPS[stepsKey]) !=0 &&
               <Button
               variant="primary"
