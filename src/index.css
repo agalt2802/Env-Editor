@@ -117,3 +117,9 @@ h1{
 {
   width: 100px;
 }
+
+.flowsList
+{
+  overflow: scroll;
+  height: 200px;
+}

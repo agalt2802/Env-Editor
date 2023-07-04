@@ -21,9 +21,9 @@ import { fetchWithCatch } from "../../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
-function EditCron() {
+function EditCron({cronId}) {
   const [crons, setCrons] = useState({});
-  const [selectedCron, setSelectedCron] = useState("");
+  const [selectedCron, setSelectedCron] = useState(cronId);
   const [cronFlows, setCronFlows] = useState([]);
   const [flows, setFlows] = useState([]);
   const [showAddFlow, setShowAddFlow] = useState(false);

@@ -13,7 +13,7 @@ export default function CronRow({data, editCron})
 
 	const handleEdit = () =>
 	{
-		editCron();	//TODO: add cron id
+		editCron(data.RUN);
 	};
 
 	const handleRemove = () =>

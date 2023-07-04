@@ -14,16 +14,17 @@ export default function Crons()
 		EDIT: 2
 	};
 
-	const [action, setAction] = useState(Actions.LIST);
+	const [state, setState] = useState({ action: Actions.LIST });
 
-	const createCron = () => { setAction(Actions.CREATE); }
-	const editCron = () => { setAction(Actions.EDIT); }
+	const showFlowsList = () => { setState({ action: Actions.LIST }); }
+	const createCron = () => { setState({ action: Actions.CREATE }); }
+	const editCron = (cronId) => { setState({ action: Actions.EDIT, cronId: cronId }); }
 
 	return (
 		<div>
-			{action == Actions.LIST && <CronsList createCron={createCron} editCron={editCron} />}
-			{action == Actions.CREATE && <CreateCron />}
-			{action == Actions.EDIT && <EditCron />}
+			{state.action == Actions.LIST && <CronsList createCron={createCron} editCron={editCron} />}
+			{state.action == Actions.CREATE && <CreateCron showFlowsList={showFlowsList} />}
+			{state.action == Actions.EDIT && <EditCron cronId={state.cronId} />}
 		</div>
 	);
 }
