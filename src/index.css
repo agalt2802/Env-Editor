@@ -93,3 +93,27 @@ h1{
 #stepForm{
   margin-top: 10px !important;
 }
+
+.cronRow
+{
+  padding: 10px;
+  margin: 10px 0px;
+  border: 1px solid #0074f0;
+  border-radius: 20px;
+}
+
+.cronRow > .col
+{
+  padding: 0px;
+  line-height: 33px;
+}
+
+.cronRow > .spinner-border
+{
+  margin: auto;
+}
+
+.addCronBtn
+{
+  width: 100px;
+}

@@ -4,7 +4,7 @@ import {
   Input,
   FormGroup,
 } from "reactstrap";
-import { fetchWithCatch } from "../../commonFunctions";
+import { fetchWithCatch } from "../../../commonFunctions";
 
 
 import "semantic-ui-css/semantic.min.css";

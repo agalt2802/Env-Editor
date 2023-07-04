@@ -17,7 +17,7 @@ import CronSelector from "./CronSelector";
 import CronDetails from "./CronDetails";
 import AddFlows from "./AddFlows";
 import CronSchedule from "./CronSchedule";
-import { fetchWithCatch } from "../../commonFunctions";
+import { fetchWithCatch } from "../../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
