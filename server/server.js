@@ -9,7 +9,7 @@ const multer = require('multer');
 const e = require("express");
 let PORT = 8081;
 let IP = "127.0.0.1";
-const {replaceTodayIntoTheString} = require('../src/commonFunctions');
+const {replaceTodayIntoTheString} = require('./utils');
 
 let app = new express();
 http.createServer(app).listen(PORT, IP, () => {
