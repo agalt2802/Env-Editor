@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import EditCommons from "./EditCommons/EditCommons";
 import CreateFlow from "./CreateFlow/CreateFlow";
 import UpdateFlows from "./UpdateFlows/UpdateFlows";
-import CreateCron from "./CreateCron/CreateCron"
-import EditCron from "./EditCron/EditCron";
+import Crons from "./Crons/Crons";
 import ViewLogs from "./ViewLogs/ViewLogs";
 import DownloadButton from './DownloadButton';
 import FileUpload from './FileUpload';
@@ -46,10 +45,7 @@ function Home() {
             <Nav.Link eventKey={"UpdateFlows"} >EDIT FLOW</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link eventKey={"CreateCron"}  >CREATE CRON</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link eventKey={"EditCron"}  >EDIT CRON</Nav.Link>
+            <Nav.Link eventKey={"Crons"}  >MANAGE CRONS</Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link eventKey={"ViewLogs"}  >VIEW LOGS</Nav.Link>
@@ -69,10 +65,8 @@ function Home() {
         <CreateFlow />
       ) : selectedComponent === "UpdateFlows" ? (
         <UpdateFlows />
-      ) : selectedComponent === "CreateCron" ? (
-        <CreateCron/>
-      ) : selectedComponent === "EditCron" ? (
-        <EditCron/>
+      ) : selectedComponent === "Crons" ? (
+        <Crons/>
       ) : selectedComponent === "ViewLogs" ? (
         <ViewLogs/>
       ) : selectedComponent === "DownloadFile" ? (

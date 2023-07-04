@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Row, Label, Input } from "reactstrap";
-import { fetchWithCatch } from "../../commonFunctions";
+import { fetchWithCatch } from "../../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
