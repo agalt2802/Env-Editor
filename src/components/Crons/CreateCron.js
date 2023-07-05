@@ -7,9 +7,15 @@ import {
 	Input,
 	Button,
 	ListGroup,
-	ListGroupItem,
-	Paragraph
+	ListGroupItem
 } from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTrash,
+  faArrowUp,
+  faArrowDown,
+  faSquarePlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
@@ -20,8 +26,10 @@ export default function CreateCron({showFlowsList})
 		name: "",
 		schedule: "",
 		flows: {},
-		flowToAdd: "",
-		flowToRemove: ""
+		availableFlows: [],
+		addedFlows: [],
+		selectedAvailableFlow: -1,
+		selectedAddedFlow: -1
 	};
 	const [state, setState] = useState(initalState);
 	
@@ -30,12 +38,13 @@ export default function CreateCron({showFlowsList})
 		{
 			fetchWithCatch("/flows", {}, (flows) => {
 				console.log(flows);
-
-				Object.keys(flows).map((key) => {
-					flows[key].ADDED = false;
-				});
 				
-				setState(prevData => ({...prevData, flows: flows }));
+				setState(prevData =>
+				({
+					...prevData,
+					flows: flows,
+					availableFlows: Array(Object.keys(flows).length).fill(1).map((element, index) => index)
+				}));
 			});
 		}
 	}, [state.flows]);
@@ -48,7 +57,8 @@ export default function CreateCron({showFlowsList})
 	}
 	
 	const save = (event) => {
-		let cronFlows = Object.keys(state.flows).filter((key) => state.flows[key].ADDED);
+		//let cronFlows = Object.keys(state.flows).filter((key) => state.flows[key].ADDED);
+		let cronFlows = state.addedFlows.map(index => Object.keys(state.flows)[index]);
 		let flowsNames = cronFlows.join(",");
 
 		fetchWithCatch("/newCron", {
@@ -75,29 +85,89 @@ export default function CreateCron({showFlowsList})
 		});
 	};
 
+	const cancel = (event) =>
+	{
+		setState(initalState);
+		showFlowsList();
+	}
+
 	const addFlow = (event) => { moveFlow(event, true) };
 	const removeFlow = (event) => { moveFlow(event, false) };
 
 	const moveFlow = (event, add) =>
 	{
-		let key = event.target.id;
-		console.log(key);
+		let availableFlows = state.availableFlows;
+		let addedFlows = state.addedFlows;
+		if(add)
+		{
+			availableFlows.splice(availableFlows.indexOf(state.selectedAvailableFlow), 1);
+			addedFlows.push(state.selectedAvailableFlow);
+		}
+		else
+		{
+			addedFlows.splice(addedFlows.indexOf(state.selectedAddedFlow), 1);
+			availableFlows.push(state.selectedAddedFlow);
+			availableFlows.sort();
+		}
 
-		let newFlows = state.flows;
-		newFlows[key].ADDED = add;
-		console.log(newFlows[key]);
+		console.log(availableFlows, addedFlows);
 		
-		setState(prevData => ({...prevData, flowToAdd: key, flowToRemove: key, flows: newFlows }));
+		setState(prevData =>
+		({
+			...prevData,
+			availableFlows: availableFlows,
+			addedFlows: addedFlows,
+			selectedAvailableFlow: (add ? -1 : state.selectedAddedFlow),
+			selectedAddedFlow: (!add ? -1 : state.selectedAvailableFlow)
+		}));
 	};
 
-	const selectFlowToAdd = (event) =>
+	const selectAvailableFlow = (event) =>
 	{
-		setState(prevData => ({...prevData, flowToAdd: event.target.id }));
+		setState(prevData =>
+		({
+			...prevData,
+			selectedAvailableFlow: parseInt(event.target.id),
+			selectedAddedFlow: -1
+		}));
 	}
 
-	const selectFlowToRemove = (event) =>
+	const selectAddedFlow = (event) =>
 	{
-		setState(prevData => ({...prevData, flowToRemove: event.target.id }));
+		setState(prevData =>
+		({
+			...prevData,
+			selectedAddedFlow: parseInt(event.target.id),
+			selectedAvailableFlow: -1
+		}));
+	}
+
+	const sortFlows = (event, up) =>
+	{
+		let addedFlows = state.addedFlows;
+
+		let srcIndex = addedFlows.indexOf(state.selectedAddedFlow);
+		let dstIndex = srcIndex;
+		if(up)
+			dstIndex--;
+		else
+			dstIndex++;
+
+		let tmp = addedFlows[dstIndex];
+		addedFlows[dstIndex] = addedFlows[srcIndex];
+		addedFlows[srcIndex] = tmp;
+
+		setState(prevData => ({...prevData, addedFlows: addedFlows }));
+	}
+
+	const sortFlowsUp = (event) =>
+	{
+		sortFlows(event, true);
+	}
+
+	const sortFlowsDown = (event) =>
+	{
+		sortFlows(event, false);
 	}
 
 	return (
@@ -129,46 +199,62 @@ export default function CreateCron({showFlowsList})
 				/>
 			</Row>
 			<Row>
-				<Label>Seleziona flussi:</Label>
+				<Label>Seleziona flussi (doppio click)</Label>
 				<Col className="flowsList">
+					<Label>Flussi disponibili:</Label>
 					<ListGroup>
-						{!Object.values(state.flows).some((flow) => !flow.ADDED) && <ListGroupItem disabled>No flow available</ListGroupItem>}
-						{Object.keys(state.flows).map((flowKey) => (
-							console.log(state.flows[flowKey].ADDED) || 
-							!state.flows[flowKey].ADDED &&
-							<ListGroupItem id={flowKey} onClick={selectFlowToAdd} action active={flowKey == state.flowToAdd} onDoubleClick={addFlow}>
-								{state.flows[flowKey].NAME}
+						{state.availableFlows.length == 0 && <ListGroupItem disabled>No flow available</ListGroupItem>}
+						{state.availableFlows.map((keyIndex) => (
+							<ListGroupItem id={keyIndex} onClick={selectAvailableFlow} action active={keyIndex == state.selectedAvailableFlow} onDoubleClick={addFlow}>
+								{state.flows[Object.keys(state.flows)[keyIndex]].NAME}
 							</ListGroupItem>
 						))}
 					</ListGroup>
 				</Col>
 				<Col className="flowsList">
+					<Label>Flussi aggiunti al cron:</Label>
 					<ListGroup>
-						{!Object.values(state.flows).some((flow) => flow.ADDED) && <ListGroupItem disabled>No flow added</ListGroupItem>}
-						{Object.keys(state.flows).map((flowKey) => (
-							state.flows[flowKey].ADDED &&
-							<ListGroupItem id={flowKey} onClick={selectFlowToRemove} action active={flowKey == state.flowToRemove} onDoubleClick={removeFlow} >
-								{state.flows[flowKey].NAME}
+						{state.addedFlows.length == 0 && <ListGroupItem disabled>No flow added</ListGroupItem>}
+						{state.addedFlows.map((keyIndex) => (
+							<ListGroupItem id={keyIndex} onClick={selectAddedFlow} action active={keyIndex == state.selectedAddedFlow} onDoubleClick={removeFlow} >
+								{state.flows[Object.keys(state.flows)[keyIndex]].NAME}
 							</ListGroupItem>
 						))}
 					</ListGroup>
+				</Col>
+				<Col xs={1}>
+					<Row>
+						<Button disabled={state.selectedAddedFlow < 0 || state.selectedAddedFlow == state.addedFlows[0]} onClick={sortFlowsUp}>
+							<FontAwesomeIcon icon={faArrowUp} />
+						</Button>
+					</Row>
+					<Row>
+						<Button disabled={state.selectedAddedFlow < 0 || state.selectedAddedFlow == state.addedFlows[state.addedFlows.length-1]} onClick={sortFlowsDown}>
+							<FontAwesomeIcon icon={faArrowDown} />
+						</Button>
+					</Row>
 				</Col>
 			</Row>
-			{state.flows[state.flowToAdd] !== undefined && state.flows[state.flowToAdd].DESCRIPTION !== undefined &&
+			{state.selectedAvailableFlow >= 0 && state.flows[Object.keys(state.flows)[state.selectedAvailableFlow]].DESCRIPTION !== undefined &&
 				<Row>
 					<Col>
 						<Label>Descrizione flusso:</Label>
-						<p>{state.flows[state.flowToAdd].DESCRIPTION}</p>
+						<p>{state.flows[Object.keys(state.flows)[state.selectedAvailableFlow]].DESCRIPTION}</p>
 					</Col>
 				</Row>
 			}
-			{state.name !== "" && state.schedule !== "" && Object.values(state.flows).some((flow) => flow.ADDED) && (
-				<Row>
-					<div className="d-flex justify-content-end">
-						<Button id="saveCron" className="button" color="primary" type="submit" onClick={save}>SAVE CRON</Button>
-					</div>
-				</Row>
-			)}
+			<Row>
+				<Col>
+					<Button id="cancel" className="button" color="danger" type="submit" onClick={cancel}>Cancel</Button>
+				</Col>
+				{state.name !== "" && state.schedule !== "" && state.addedFlows.length > 0 && (
+					<Col>
+						<div className="d-flex justify-content-end">
+							<Button id="saveCron" className="button" color="primary" type="submit" onClick={save}>SAVE CRON</Button>
+						</div>
+					</Col>
+				)}
+			</Row>
 		</Container>
 	);
 }
