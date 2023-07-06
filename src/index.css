@@ -99,7 +99,7 @@ h1{
   padding: 10px;
   margin: 10px 0px;
   border: 1px solid #0074f0;
-  border-radius: 20px;
+  border-radius: 10px;
 }
 
 .cronRow > .col
@@ -116,7 +116,10 @@ h1{
 
 .addCronBtn
 {
-  width: 100px;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  line-height: 33px;
 }
 
 .flowsList
