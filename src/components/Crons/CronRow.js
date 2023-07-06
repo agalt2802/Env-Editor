@@ -53,13 +53,13 @@ export default function CronRow({cron, editCron, refreshList})
 			<Col>{cron.INIT_SCHEDULER}</Col>
 			<Col xs={2}>
 				<ButtonGroup>
-					<Button onClick={handleEdit}>
+					<Button color="primary" onClick={handleEdit}>
 						<FontAwesomeIcon icon={faPenToSquare} />
 					</Button>
-					<Button onClick={handleRemove}>
+					<Button color="danger" onClick={handleRemove}>
 						<FontAwesomeIcon icon={faTrash} />
 					</Button>
-					<Button onClick={handleChangeStatus} disabled={waiting}>
+					<Button color="success" onClick={handleChangeStatus} disabled={waiting}>
 						{!waiting ?
 							<FontAwesomeIcon icon={(enabled ? faStop : faPlay)} />
 							:

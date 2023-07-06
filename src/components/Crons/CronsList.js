@@ -63,7 +63,7 @@ export default function CronsList({createCron, editCron})
 			{renderCronsRows()}
 			<Row className="text-center">
 				<Col>
-					<Button onClick={createCron} className="addCronBtn">
+					<Button color="primary" onClick={createCron} className="addCronBtn">
 						<FontAwesomeIcon icon={faAdd} />
 					</Button>
 				</Col>
