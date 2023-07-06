@@ -7,7 +7,8 @@ import {
 	Input,
 	Button,
 	ListGroup,
-	ListGroupItem
+	ListGroupItem,
+	FormGroup
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp, faArrowDown } from "@fortawesome/free-solid-svg-icons";
@@ -76,6 +77,11 @@ export default function CreateCron({showFlowsList, cronID})
 		const { name, value } = event.target;
 
 		setState(prevData => ({...prevData, [name]: value.toUpperCase()}));
+	}
+
+	const handleSwitchChange = (event) =>
+	{
+		setState(prevData => ({...prevData, enabled: !state.enabled}));
 	}
 	
 	const save = (event, overwrite) => {
@@ -204,7 +210,10 @@ export default function CreateCron({showFlowsList, cronID})
 				</Col>
 			</Row>
 			<Row>
-				<Input type="checkbox" name="enabled" checked={state.enabled} onChange={handleChange} /> Cron abilitato
+				<FormGroup switch>
+					<Input type="switch" name="enabled" checked={state.enabled} onClick={handleSwitchChange} />
+					<Label check>Cron abilitato</Label>
+				</FormGroup>
 			</Row>
 			<Row>
 				<Label>Nome</Label>
