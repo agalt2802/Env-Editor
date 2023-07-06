@@ -12,6 +12,7 @@ export default function CronRow({cron, editCron, refreshList})
 	const [enabled, setEnabled] = useState(cron.ENABLED);
 	const [waiting, setWaiting] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showChangeStatusModal, setShowChangeStatusModal] = useState(false);
 
 	const handleEdit = () =>
 	{
@@ -21,8 +22,6 @@ export default function CronRow({cron, editCron, refreshList})
 	const handleRemove = () =>
 	{
 		setShowDeleteModal(true);
-
-		console.log(showDeleteModal);
 	};
 
 	const deleteCron = () =>
@@ -31,6 +30,11 @@ export default function CronRow({cron, editCron, refreshList})
 	}
 
 	const handleChangeStatus = () =>
+	{
+		setShowChangeStatusModal(true);
+	}
+
+	const changeCronStatus = () =>
 	{
 		setWaiting(true);
 
@@ -68,6 +72,7 @@ export default function CronRow({cron, editCron, refreshList})
 					</Button>
 				</ButtonGroup>
 			</Col>
+			<ConfirmModal text={(enabled ? "Disabilitare" : "Abilitare")+" il cron "+cron.RUN+"?"} visible={showChangeStatusModal} setVisible={setShowChangeStatusModal} onConfirm={changeCronStatus} />
 			<ConfirmModal text={"Eliminare il cron "+cron.RUN+"?"} visible={showDeleteModal} setVisible={setShowDeleteModal} onConfirm={deleteCron} />
 		</Row>
 	);
