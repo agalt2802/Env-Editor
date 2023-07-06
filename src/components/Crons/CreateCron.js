@@ -7,15 +7,12 @@ import {
 	Input,
 	Button,
 	ListGroup,
-	ListGroupItem,
-	Modal
+	ListGroupItem
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowUp,
-  faArrowDown
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp, faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../commonFunctions";
+import ConfirmModal from "../ConfirmModal";
 
 import "semantic-ui-css/semantic.min.css";
 
@@ -54,7 +51,7 @@ export default function CreateCron({showFlowsList, cronID})
 						let addedFlows = cronFlows.map(item =>
 						{
 							let flowIndex = Object.keys(flows).indexOf(item);
-							//availableFlows.splice(availableFlows.indexOf(flowIndex), 1);
+							availableFlows.splice(availableFlows.indexOf(flowIndex), 1);
 
 							return flowIndex;
 						});
@@ -194,7 +191,7 @@ export default function CreateCron({showFlowsList, cronID})
 		sortFlows(event, false);
 	}
 
-	const showSaveModal = (visible) =>
+	const setShowSaveModal = (visible) =>
 	{
 		setState(prevData => ({...prevData, showSaveModal: visible }));
 	}
@@ -217,6 +214,7 @@ export default function CreateCron({showFlowsList, cronID})
 					value={state.name}
 					onChange={handleChange}
 					autoFocus={true}
+					disabled={cronID !== undefined}
 				/>
 			</Row>
 			<Row>
@@ -282,22 +280,12 @@ export default function CreateCron({showFlowsList, cronID})
 				{state.name !== "" && state.schedule !== "" && state.addedFlows.length > 0 && (
 					<Col>
 						<div className="d-flex justify-content-end">
-							<Button id="saveCron" className="button" color="primary" type="submit" onClick={(cronID === undefined) ? save : () => showSaveModal(true)}>SAVE CRON</Button>
+							<Button id="saveCron" className="button" color="primary" type="submit" onClick={(cronID === undefined) ? save : () => setShowSaveModal(true)}>SAVE CRON</Button>
 						</div>
 					</Col>
 				)}
 			</Row>
-
-			{state.flows.length > 0 &&
-				<Modal show={state.showSaveModal} onHide={() => showSaveModal(false)} autoFocus={false} onChange={(event) => event.preventDefault()}>
-					<Modal.Header closeButton>Conferma</Modal.Header>
-					<Modal.Body>Vuoi salvare il cron {state.flows[Object.keys(state.flows)[state.selectedAvailableFlow]].RUN}</Modal.Body>
-					<Modal.Footer>
-						<Button color="success" onClick={save}>Conferma</Button>
-						<Button color="danger" onClick={() => showSaveModal(false)}>Annulla</Button>
-					</Modal.Footer>
-				</Modal>
-			}
+			<ConfirmModal text={"Vuoi salvare il cron "+cronID+"?"} visible={state.showSaveModal} setVisible={setShowSaveModal} onConfirm={save} />
 		</Container>
 	);
 }

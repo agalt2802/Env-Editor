@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import CronsList from "./CronsList";
 import CreateCron from "./CreateCron"
-import EditCron from "./EditCron/EditCron";
 
 import "semantic-ui-css/semantic.min.css";
 
@@ -25,7 +24,6 @@ export default function Crons()
 			{state.action == Actions.LIST && <CronsList createCron={createCron} editCron={editCron} />}
 			{state.action == Actions.CREATE && <CreateCron showFlowsList={showFlowsList} />}
 			{state.action == Actions.EDIT && <CreateCron showFlowsList={showFlowsList} cronID={state.cronId} />}
-			{console.log(state)}
 		</div>
 	);
 }

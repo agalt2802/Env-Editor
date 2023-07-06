@@ -3,6 +3,7 @@ import { Row, Col, ButtonGroup, Button, Spinner } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faStop, faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../commonFunctions";
+import ConfirmModal from "../ConfirmModal";
 
 import "semantic-ui-css/semantic.min.css";
 
@@ -10,6 +11,7 @@ export default function CronRow({cron, editCron, refreshList})
 {
 	const [enabled, setEnabled] = useState(cron.ENABLED);
 	const [waiting, setWaiting] = useState(false);
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 	const handleEdit = () =>
 	{
@@ -18,8 +20,15 @@ export default function CronRow({cron, editCron, refreshList})
 
 	const handleRemove = () =>
 	{
-		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}`, { method: "DELETE" }, refreshList)
+		setShowDeleteModal(true);
+
+		console.log(showDeleteModal);
 	};
+
+	const deleteCron = () =>
+	{
+		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}`, { method: "DELETE" }, refreshList)
+	}
 
 	const handleChangeStatus = () =>
 	{
@@ -40,7 +49,7 @@ export default function CronRow({cron, editCron, refreshList})
 	return (
 		<Row className="cronRow">
 			<Col>{cron.RUN}</Col>
-			<Col>{cron.INIT_FLOWS}</Col>
+			<Col style={{overflow: "hidden"}}>{cron.INIT_FLOWS.split(',').map(str => <p>{str}</p>)}</Col>
 			<Col>{cron.INIT_SCHEDULER}</Col>
 			<Col xs={2}>
 				<ButtonGroup>
@@ -59,8 +68,7 @@ export default function CronRow({cron, editCron, refreshList})
 					</Button>
 				</ButtonGroup>
 			</Col>
-
-			<Modal>FOR DELETE</Modal>
+			<ConfirmModal text={"Eliminare il cron "+cron.RUN+"?"} visible={showDeleteModal} setVisible={setShowDeleteModal} onConfirm={deleteCron} />
 		</Row>
 	);
 }
