@@ -9,34 +9,42 @@ import "semantic-ui-css/semantic.min.css";
 
 export default function CronsList({createCron, editCron})
 {
-	const [cronsRows, setCronsRows] = useState([]);
+	const [state, setState] = useState(
+	{
+		crons: [],
+		loaded: false
+	});
 
 	useEffect(() =>
 	{
-		if (cronsRows.length == 0)
-			fetchWithCatch("/crons", {}, (json) => {
-				setCronsRows(json.CRON_CONFS.CRONS);
+		if(!state.loaded)
+			refreshList();
+	}, [state]);
+
+	const refreshList = () =>
+	{
+		fetchWithCatch("/crons", {}, (crons) => {
+			setState(
+			{
+				crons: crons,
+				loaded: true
 			});
-	}, [cronsRows]);
+		});
+	}
 
 	const renderCronsRows = () =>
 	{
-		if(cronsRows.length == 0)
-		{
+		if(state.crons.length == 0)
 			return (
 				<Row>
-					<Col>No crons scheduled</Col>
+					<Col>No crons in configuration</Col>
 				</Row>
-			)
-		}
+			);
 		else
-		{
-			let rows = [];
-			for(const i in cronsRows)
-				rows.push(<CronRow key={i} data={cronsRows[i]} editCron={editCron} />);
-			
-			return rows;
-		}
+			return state.crons.map((cron, index) =>
+			{
+				return <CronRow key={index} cron={cron} editCron={editCron} refreshList={refreshList} />;
+			});
 	}
 
 	return (
@@ -50,7 +58,7 @@ export default function CronsList({createCron, editCron})
 				<Col>Name</Col>
 				<Col>Flows</Col>
 				<Col>Scheduling</Col>
-				<Col xs={1}>Actions</Col>
+				<Col xs={2}>Actions</Col>
 			</Row>
 			{renderCronsRows()}
 			<Row className="text-center">

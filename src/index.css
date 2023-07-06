@@ -123,3 +123,9 @@ h1{
   overflow: scroll;
   height: 200px;
 }
+
+.cronSortButton
+{
+  height: 50%;
+  padding: 30%;
+}

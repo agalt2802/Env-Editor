@@ -7,9 +7,21 @@ const format = require("date-format");
 const path = require('path');
 const multer = require('multer');
 const e = require("express");
+const cors = require('cors');
+
 let PORT = 8081;
 let IP = "127.0.0.1";
 const {replaceTodayIntoTheString} = require('./utils');
+
+class HTTPError extends Error
+{
+  constructor(message, code = 500)
+  {
+    super(message);
+    
+    this.statusCode = code;
+  }
+}
 
 let app = new express();
 http.createServer(app).listen(PORT, IP, () => {
@@ -23,10 +35,10 @@ http.createServer(app).listen(PORT, IP, () => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   next();
 });
+app.use(cors());
 
 let serverConfig = yaml.load(fs.readFileSync("./server/serverConfig.yml"))
 
@@ -46,35 +58,114 @@ app.get("/flows", (req, res) => {
   res.send(envContent);
 });
 
+function editConf(path, backupPath, process, success)
+{
+  let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+  envContent = process(envContent);
+
+  fs.writeFileSync(replaceTodayIntoTheString(backupPath) , fs.readFileSync(path));
+  fs.writeFileSync(path, yaml.dump(envContent));
+
+  (success !== undefined) && success();
+}
+
+function getAllCrons()
+{
+  let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
+
+  return envContent.CRON_CONFS.CRONS;
+}
+
+function getCron(req, res)
+{
+  let cronId = req.params.id;
+  let crons = getAllCrons();
+
+  let cronIndex = crons.findIndex((element) => element.RUN == cronId);
+  if(cronIndex < 0)
+    throw new HTTPError("Cron doesn't exists!");
+
+  res.send(crons[cronIndex]);
+}
+
+function setCron(req, res, overwrite)
+{
+  let cronId = req.params.id;
+  let cronData = req.body;
+
+  editConf(serverConfig.CRONCONF_PATH, serverConfig.CRONCONF_BACKUP_PATH, (content) =>
+  {
+    let indexToEdit = content.CRON_CONFS.CRONS.findIndex((element) => element.RUN == cronId);
+    if(indexToEdit >= 0 && !overwrite)
+      throw new HTTPError("Cron already exists!", 409);
+  
+    if(indexToEdit < 0)
+      content.CRON_CONFS.CRONS.push(cronData);
+    else
+      content.CRON_CONFS.CRONS[indexToEdit] = cronData;
+
+    return content;
+  }, () =>
+  {
+    console.log("Cron", cronData.RUN, "updated");
+  
+    res.send(cronData);  
+  });
+}
+
 function cronChangeStatus(req, res, enable)
 {
   let cronId = req.params.id;
-  let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
-  let crons = envContent.CRON_CONFS.CRONS;
+  let cronData = req.body;
 
-  let indexToEdit = crons.findIndex((element) => element.RUN == cronId);
-  if(indexToEdit < 0)
-    throw new Error("Cron doesn't exists!");
+  let cron;
+  editConf(serverConfig.CRONCONF_PATH, serverConfig.CRONCONF_BACKUP_PATH, (content) =>
+  {
+    let indexToEdit = content.CRON_CONFS.CRONS.findIndex((element) => element.RUN == cronId);
+    if(indexToEdit < 0)
+    throw new HTTPError("Cron doesn't exists!");
+  
+    content.CRON_CONFS.CRONS[indexToEdit].ENABLED = enable;
 
-  crons[indexToEdit].ENABLED = enable;
-  console.log("Cron", crons[indexToEdit].RUN, (enable ? "enabled" : "disabled"));
+    cron = content.CRON_CONFS.CRONS[indexToEdit];
 
-  let configFile = fs.readFileSync(serverConfig.CRONCONF_PATH);
-  fs.writeFileSync(replaceTodayIntoTheString(serverConfig.CRONCONF_BACKUP_PATH) , configFile);
+    return content;
+  }, () =>
+  {
+    console.log("Cron", cron, (enable ? "enabled" : "disabled"));
 
-  envContent.CRON_CONFS.CRONS = crons;
-  fs.writeFileSync(serverConfig.CRONCONF_PATH, yaml.dump(envContent));
-
-  res.send(envContent.CRON_CONFS.CRONS[indexToEdit]);
+    res.send(cron);  
+  });
 }
 
-app.get('/crons/:id/enable', (req, res) => { cronChangeStatus(req, res, true); });
-app.get('/crons/:id/disable', (req, res) => { cronChangeStatus(req, res, false); });
+function deleteCron(req, res)
+{
+  let cronId = req.params.id;
 
-app.get("/crons", (req, res) => {
-  let envContent = yaml.load(fs.readFileSync(serverConfig.CRONCONF_PATH)); //TOCONFIG: funziona se si espone lanciando da ../server/ con node server.js
-  res.send(envContent);
-});
+  let cron;
+  editConf(serverConfig.CRONCONF_PATH, serverConfig.CRONCONF_BACKUP_PATH, (content) =>
+  {
+    let indexToEdit = content.CRON_CONFS.CRONS.findIndex((element) => element.RUN == cronId);
+  
+    cron = content.CRON_CONFS.CRONS[indexToEdit];
+    content.CRON_CONFS.CRONS.splice(indexToEdit, 1);
+
+    return content;
+  }, () =>
+  {
+    console.log("Cron", cron, "deleted");
+
+    res.send(cron);
+  });
+}
+
+app.put('/crons/:id/enable', (req, res) => { cronChangeStatus(req, res, true); });
+app.put('/crons/:id/disable', (req, res) => { cronChangeStatus(req, res, false); });
+app.get('/crons/:id', getCron);
+app.put('/crons/:id', (req, res) => { setCron(req, res, true); });
+app.post('/crons/:id', (req, res) => { setCron(req, res, false); });
+app.delete('/crons/:id', deleteCron);
+app.get("/crons", (req, res) => { res.send(getAllCrons()); });
 
 app.post("/updateCommons", (req, res) => {
   let env = fs.readFileSync(serverConfig.COMMONS_PATH);
@@ -210,5 +301,8 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
 //Error handler
 app.use((err, req, res, next) => {
-  res.status(500).send(err.message);
+  if(res.headersSent)
+    return next(err);
+
+  res.status(err.statusCode || 500).send(err.message);
 });

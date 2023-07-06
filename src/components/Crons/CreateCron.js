@@ -7,29 +7,30 @@ import {
 	Input,
 	Button,
 	ListGroup,
-	ListGroupItem
+	ListGroupItem,
+	Modal
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faTrash,
   faArrowUp,
-  faArrowDown,
-  faSquarePlus,
+  faArrowDown
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
-export default function CreateCron({showFlowsList})
+export default function CreateCron({showFlowsList, cronID})
 {
 	const initalState = {
 		name: "",
 		schedule: "",
+		enabled: true,
 		flows: {},
 		availableFlows: [],
 		addedFlows: [],
 		selectedAvailableFlow: -1,
-		selectedAddedFlow: -1
+		selectedAddedFlow: -1,
+		showSaveModal: false
 	};
 	const [state, setState] = useState(initalState);
 	
@@ -39,12 +40,36 @@ export default function CreateCron({showFlowsList})
 			fetchWithCatch("/flows", {}, (flows) => {
 				console.log(flows);
 				
-				setState(prevData =>
-				({
-					...prevData,
-					flows: flows,
-					availableFlows: Array(Object.keys(flows).length).fill(1).map((element, index) => index)
-				}));
+				if(cronID === undefined)
+					setState(prevData =>
+					({
+						...prevData,
+						flows: flows,
+						availableFlows: Array(Object.keys(flows).length).fill(1).map((element, index) => index)
+					}));
+				else
+					fetchWithCatch(`/crons/${encodeURIComponent(cronID)}`, {}, (cron) => {
+						let availableFlows = Array(Object.keys(flows).length).fill(1).map((element, index) => index);
+						let cronFlows = cron.INIT_FLOWS.split(",");
+						let addedFlows = cronFlows.map(item =>
+						{
+							let flowIndex = Object.keys(flows).indexOf(item);
+							//availableFlows.splice(availableFlows.indexOf(flowIndex), 1);
+
+							return flowIndex;
+						});
+
+						setState(prevData =>
+						({
+							...prevData,
+							name: cron.RUN,
+							enabled: cron.ENABLED,
+							schedule: cron.INIT_SCHEDULER,
+							flows: flows,
+							addedFlows: addedFlows,
+							availableFlows: availableFlows
+						}));
+					});
 			});
 		}
 	}, [state.flows]);
@@ -56,38 +81,37 @@ export default function CreateCron({showFlowsList})
 		setState(prevData => ({...prevData, [name]: value.toUpperCase()}));
 	}
 	
-	const save = (event) => {
-		//let cronFlows = Object.keys(state.flows).filter((key) => state.flows[key].ADDED);
+	const save = (event, overwrite) => {
 		let cronFlows = state.addedFlows.map(index => Object.keys(state.flows)[index]);
 		let flowsNames = cronFlows.join(",");
 
-		fetchWithCatch("/newCron", {
-			method: "POST",
+		fetchWithCatch(`/crons/${encodeURIComponent(state.name)}`, {
+			method: (cronID === undefined ? "POST" : "PUT"),
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({
+			body: JSON.stringify(
+			{
 				RUN: state.name,
+				ENABLED: state.enabled,
 				INIT_SCHEDULER: state.schedule,
-				INIT_FLOWS: flowsNames,
+				INIT_FLOWS: flowsNames
 			}),
 		}, (res) =>
 		{
 			console.log("salva flusso");
 
-			setState(initalState);
 			showFlowsList();
 		}, (e) =>
 		{
 			console.log(e);
-			if (e.status === 500)
+			if(e.status === 500 && cronID === undefined)
 				return alert("cron with name " + state.name + " already exists!");
 		});
 	};
 
 	const cancel = (event) =>
 	{
-		setState(initalState);
 		showFlowsList();
 	}
 
@@ -156,7 +180,7 @@ export default function CreateCron({showFlowsList})
 		let tmp = addedFlows[dstIndex];
 		addedFlows[dstIndex] = addedFlows[srcIndex];
 		addedFlows[srcIndex] = tmp;
-
+		
 		setState(prevData => ({...prevData, addedFlows: addedFlows }));
 	}
 
@@ -170,12 +194,20 @@ export default function CreateCron({showFlowsList})
 		sortFlows(event, false);
 	}
 
+	const showSaveModal = (visible) =>
+	{
+		setState(prevData => ({...prevData, showSaveModal: visible }));
+	}
+
 	return (
 		<Container id="mainContainer">
 			<Row className="pageTitle">
 				<Col>
-					<h1>Create New Cron</h1>
+					{(cronID === undefined) ? <h1>Create New Cron</h1> : <h1>Edit Cron</h1>}
 				</Col>
+			</Row>
+			<Row>
+				<Input type="checkbox" name="enabled" checked={state.enabled} onChange={handleChange} /> Cron abilitato
 			</Row>
 			<Row>
 				<Label>Nome</Label>
@@ -216,19 +248,19 @@ export default function CreateCron({showFlowsList})
 					<ListGroup>
 						{state.addedFlows.length == 0 && <ListGroupItem disabled>No flow added</ListGroupItem>}
 						{state.addedFlows.map((keyIndex) => (
-							<ListGroupItem id={keyIndex} onClick={selectAddedFlow} action active={keyIndex == state.selectedAddedFlow} onDoubleClick={removeFlow} >
+							<ListGroupItem id={keyIndex} onClick={selectAddedFlow} action active={keyIndex == state.selectedAddedFlow} onDoubleClick={removeFlow}>
 								{state.flows[Object.keys(state.flows)[keyIndex]].NAME}
 							</ListGroupItem>
 						))}
 					</ListGroup>
 				</Col>
 				<Col xs={1}>
-					<Row>
+					<Row className="cronSortButton">
 						<Button disabled={state.selectedAddedFlow < 0 || state.selectedAddedFlow == state.addedFlows[0]} onClick={sortFlowsUp}>
 							<FontAwesomeIcon icon={faArrowUp} />
 						</Button>
 					</Row>
-					<Row>
+					<Row className="cronSortButton">
 						<Button disabled={state.selectedAddedFlow < 0 || state.selectedAddedFlow == state.addedFlows[state.addedFlows.length-1]} onClick={sortFlowsDown}>
 							<FontAwesomeIcon icon={faArrowDown} />
 						</Button>
@@ -250,11 +282,22 @@ export default function CreateCron({showFlowsList})
 				{state.name !== "" && state.schedule !== "" && state.addedFlows.length > 0 && (
 					<Col>
 						<div className="d-flex justify-content-end">
-							<Button id="saveCron" className="button" color="primary" type="submit" onClick={save}>SAVE CRON</Button>
+							<Button id="saveCron" className="button" color="primary" type="submit" onClick={(cronID === undefined) ? save : () => showSaveModal(true)}>SAVE CRON</Button>
 						</div>
 					</Col>
 				)}
 			</Row>
+
+			{state.flows.length > 0 &&
+				<Modal show={state.showSaveModal} onHide={() => showSaveModal(false)} autoFocus={false} onChange={(event) => event.preventDefault()}>
+					<Modal.Header closeButton>Conferma</Modal.Header>
+					<Modal.Body>Vuoi salvare il cron {state.flows[Object.keys(state.flows)[state.selectedAvailableFlow]].RUN}</Modal.Body>
+					<Modal.Footer>
+						<Button color="success" onClick={save}>Conferma</Button>
+						<Button color="danger" onClick={() => showSaveModal(false)}>Annulla</Button>
+					</Modal.Footer>
+				</Modal>
+			}
 		</Container>
 	);
 }

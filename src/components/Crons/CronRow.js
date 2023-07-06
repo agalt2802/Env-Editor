@@ -6,19 +6,19 @@ import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
-export default function CronRow({data, editCron})
+export default function CronRow({cron, editCron, refreshList})
 {
-	const [enabled, setEnabled] = useState(data.ENABLED);
+	const [enabled, setEnabled] = useState(cron.ENABLED);
 	const [waiting, setWaiting] = useState(false);
 
 	const handleEdit = () =>
 	{
-		editCron(data.RUN);
+		editCron(cron.RUN);
 	};
 
 	const handleRemove = () =>
 	{
-
+		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}`, { method: "DELETE" }, refreshList)
 	};
 
 	const handleChangeStatus = () =>
@@ -26,11 +26,11 @@ export default function CronRow({data, editCron})
 		setWaiting(true);
 
 		let endPoint = (enabled ? "disable" : "enable");
-		fetchWithCatch(`/crons/${encodeURIComponent(data.RUN)}/${endPoint}`, {}, (cron) =>
+		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}/${endPoint}`, { method: "PUT" }, (res) =>
 		{
 			setWaiting(false);
 
-			setEnabled(cron.ENABLED);
+			setEnabled(res.ENABLED);
 		}, () =>
 		{
 			setWaiting(false);
@@ -39,17 +39,17 @@ export default function CronRow({data, editCron})
 
 	return (
 		<Row className="cronRow">
-			<Col>{data.RUN}</Col>
-			<Col>{data.INIT_FLOWS}</Col>
-			<Col>{data.INIT_SCHEDULER}</Col>
-			<Col xs={1}>
+			<Col>{cron.RUN}</Col>
+			<Col>{cron.INIT_FLOWS}</Col>
+			<Col>{cron.INIT_SCHEDULER}</Col>
+			<Col xs={2}>
 				<ButtonGroup>
 					<Button onClick={handleEdit}>
 						<FontAwesomeIcon icon={faPenToSquare} />
 					</Button>
-					{false && <Button onClick={handleRemove}>
+					<Button onClick={handleRemove}>
 						<FontAwesomeIcon icon={faTrash} />
-					</Button>}
+					</Button>
 					<Button onClick={handleChangeStatus} disabled={waiting}>
 						{!waiting ?
 							<FontAwesomeIcon icon={(enabled ? faStop : faPlay)} />
@@ -59,6 +59,8 @@ export default function CronRow({data, editCron})
 					</Button>
 				</ButtonGroup>
 			</Col>
+
+			<Modal>FOR DELETE</Modal>
 		</Row>
 	);
 }

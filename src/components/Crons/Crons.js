@@ -24,7 +24,8 @@ export default function Crons()
 		<div>
 			{state.action == Actions.LIST && <CronsList createCron={createCron} editCron={editCron} />}
 			{state.action == Actions.CREATE && <CreateCron showFlowsList={showFlowsList} />}
-			{state.action == Actions.EDIT && <EditCron cronId={state.cronId} />}
+			{state.action == Actions.EDIT && <CreateCron showFlowsList={showFlowsList} cronID={state.cronId} />}
+			{console.log(state)}
 		</div>
 	);
 }
