@@ -6,7 +6,6 @@ const yaml = require("js-yaml");
 const format = require("date-format");
 const path = require('path');
 const multer = require('multer');
-const e = require("express");
 const cors = require('cors');
 
 let PORT = 3001;
