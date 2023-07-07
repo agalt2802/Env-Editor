@@ -9,8 +9,8 @@ const multer = require('multer');
 const e = require("express");
 const cors = require('cors');
 
-let PORT = 8081;
-let IP = "127.0.0.1";
+let PORT = 3001;
+let IP = "0.0.0.0";
 const {replaceTodayIntoTheString} = require('./utils');
 
 class HTTPError extends Error
@@ -265,8 +265,17 @@ app.get('/download/:filename', (req, res) => {
   }
 });
 
-
-
+// Get secrets structure from file 
+app.get('/secrets', (req, res) => {
+  try{
+    let secrets = yaml.load(fs.readFileSync(serverConfig.SECRETS_PATH));
+    console.log(secrets)
+    res.send(secrets);
+  }catch(error){
+    res.status(500).send(error.message);
+  }
+  
+})
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
