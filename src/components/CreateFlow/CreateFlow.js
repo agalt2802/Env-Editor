@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Label, Input } from "reactstrap";
 
 import "semantic-ui-css/semantic.min.css";
@@ -6,6 +6,8 @@ import StepSelector from "./StepSelector";
 import StepDetails from "./StepDetails";
 import SaveNewFlowModal from "./SaveNewFlowModal";
 import AddedStep from "./AddedStep";
+
+import { fetchWithCatch } from "../../commonFunctions";
 
 function CreateFlow() {
   const [steps, setSteps] = useState({});
@@ -17,8 +19,18 @@ function CreateFlow() {
   const [show, setShow] = useState(false)
   const [edit, setEdit] = useState(false);
   const notEditableFileds = ["RUN", "STEP_CONTROL"];
+  const [secrets, setSecrets] = useState({});
 
   const Fields = Object.freeze({ NAME: 0, DESCRIPTION: 1 });
+
+  useEffect(() => {
+    async function fecthData() {
+      fetchWithCatch("/secrets", {}, (json) => {
+        console.log(json);
+        setSecrets(json);
+      });
+    } if (Object.keys(secrets).length === 0) fecthData();
+  }, [secrets]);
 
   const handleInputChange = (event, field) => {
     let value = event.target.value;
@@ -112,6 +124,7 @@ function CreateFlow() {
                   notEditableFileds={notEditableFileds}
                   edit={edit}
                   setEdit={setEdit}
+                  secrets={secrets}
                 />
               }
             </Col>
