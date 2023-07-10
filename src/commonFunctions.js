@@ -18,7 +18,7 @@ export function reset() {
 }
 
 export async function fetchWithCatch(url, params, success, error, forceJSON = false) {
-  await fetch("http://127.0.0.1:8081" + url, params)
+  await fetch("http://127.0.0.1:3001" + url, params)
     .then((response) => {
       if (response.ok) {
         const contentType = response.headers.get("content-type");
