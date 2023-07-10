@@ -58,6 +58,7 @@ export default function CronsList({createCron, editCron})
 				<Col>Name</Col>
 				<Col>Flows</Col>
 				<Col>Scheduling</Col>
+				<Col xs={1}>Enabled</Col>
 				<Col xs={2}>Actions</Col>
 			</Row>
 			{renderCronsRows()}
