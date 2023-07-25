@@ -12,6 +12,29 @@ code {
     monospace;
 }
 
+/*Login Page style */
+.ContainerLogin{
+  display: flex;
+  justify-content: center; /* Centra orizzontalmente */
+  /* align-items: center; Centra verticalmente */
+  height: 100%;
+  width: 50%;
+  border: 2px solid #0074f0;
+  margin: 5% 25%;
+}
+
+.Login h2 {
+  margin-top: 20px;
+}
+
+.form-group{
+  margin-top: 50px
+}
+
+.loginButton {
+  margin-top: 10px
+}
+
 /*Home Page style */
 
 #homePageContainer, #viewLogsContainer{

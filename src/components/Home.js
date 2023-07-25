@@ -12,7 +12,7 @@ import { Container, Row, Col, Label, Input } from "reactstrap";
 import Nav from "react-bootstrap/Nav";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import "./styles.css";
+//import "./styles.css";
 
 function Home() {
   const [selectedComponent, setSelectedComponent] = useState("");
