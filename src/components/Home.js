@@ -7,20 +7,17 @@ import ViewLogs from "./ViewLogs/ViewLogs";
 import DownloadButton from './DownloadButton';
 import FileUpload from './FileUpload';
 
-
-import { Container, Row, Col, Label, Input } from "reactstrap";
+import { Container, Row } from "reactstrap";
 import Nav from "react-bootstrap/Nav";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 //import "./styles.css";
 
-function Home() {
+import Navbar from "./Navbar"
+
+function Home({ handleLogout }) {
   const [selectedComponent, setSelectedComponent] = useState("");
-
-  const handleClick = (component) => {
-    setSelectedComponent(component);
-  };
-
+  
   const handleSelectComponent = (event, key) => {
     console.log(key)
     setSelectedComponent(key)
@@ -28,6 +25,7 @@ function Home() {
 
   return (
     <Container id="homePageContainer">
+      <Navbar handleLogout={handleLogout}></Navbar>
       <Row>
         <div>
           <h1>CT INFO TRANSFER</h1>

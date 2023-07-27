@@ -1,3 +1,5 @@
+import { getToken } from "./components/Login/Token";
+
 export async function saveData() {
   await fetch("http://127.0.0.1:8081/newFlow", {
     method: "POST",
@@ -17,7 +19,10 @@ export function reset() {
   setInputValue("");
 }
 
-export async function fetchWithCatch(url, params, success, error, forceJSON = false) {
+export async function fetchWithCatch(url, params, successCallback, errorCallback, forceJSON = false) {
+  if(getToken())
+    params["headers"] = new Headers({ Authorization: 'Bearer '+getToken() });
+  
   await fetch("http://127.0.0.1:3001" + url, params)
     .then((response) => {
       if (response.ok) {
@@ -32,6 +37,13 @@ export async function fetchWithCatch(url, params, success, error, forceJSON = fa
         throw error;
       }
     })
-    .then(success)
-    .catch((error !== undefined) ? error : console.log);
+    .then(successCallback)
+    .catch((e) => {
+      if(errorCallback !== undefined)
+        errorCallback(e);
+      //else
+        //ErrorHandler.addError(e);
+
+      console.log(e.message);
+    });
 }
