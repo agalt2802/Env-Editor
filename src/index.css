@@ -19,16 +19,12 @@ code {
   /* align-items: center; Centra verticalmente */
   height: 100%;
   width: 50%;
-  border: 2px solid #0074f0;
+  padding-top: 10px;
   margin: 5% 25%;
 }
 
 .Login h2 {
   margin-top: 20px;
-}
-
-.form-group{
-  margin-top: 50px
 }
 
 .loginButton {
@@ -39,6 +35,7 @@ code {
 
 #homePageContainer, #viewLogsContainer{
   width: 70%;
+  padding-top: 55px;
 }
 
 /* .navbar{
@@ -49,7 +46,7 @@ code {
   background-color: #fff !important;
   text-align: center !important;
 } */
-
+/*
 a.nav-link{
   border: solid #0074f0 2px !important;
   font-weight: 700;
@@ -63,7 +60,7 @@ a.nav-link.active  {
   background-color: #0074f0 !important;
   text-align: center!;
 }
-
+*/
  
 
 /* Create Flow style */
@@ -137,10 +134,9 @@ h1{
   margin: auto;
 }
 
-.addCronBtn
+.addCronBtn, .addFlowBtn
 {
   padding: 10px;
-  border-radius: 10px;
   width: 100%;
   line-height: 33px;
 }
@@ -157,7 +153,63 @@ h1{
   padding: 30%;
 }
 
-.navbar > .container-fluid
+.navbar
 {
-  justify-content: flex-end;
+  border-bottom: 2px solid #0074f0;
+  padding-left: 15%;
+  padding-right: 15%;
+  background: #FFFFFF;
+}
+
+.navbar ul
+{
+  flex-grow: 0.5;
+}
+
+.nav-link:hover
+{
+  background: --bg-light;
+}
+
+.card > .list-group:first-child
+{
+  border-top: 0px;
+}
+
+.card > .list-group > .list-group-item
+{
+  border-left: 0px;
+  border-right: 0px;
+}
+
+.card > .list-group:last-child
+{
+  border-bottom: 0px;
+}
+
+.rowCard
+{
+  margin-bottom: 10px;
+}
+
+.rowCard > .card-body
+{
+  padding: 10px;
+}
+
+.rowCard .alert
+{
+  margin: 0px;
+}
+
+.cardTextCol
+{
+  display: table;
+}
+
+.card-text
+{
+  height: 100%;
+  vertical-align:  middle;
+  display:table-cell;
 }

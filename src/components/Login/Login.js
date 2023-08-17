@@ -1,18 +1,76 @@
-import React from "react";
-import LoginForm from "./LoginForm";
+import React, { useState } from "react";
+import { Navigate } from "react-router-dom/dist";
+import { Container, Navbar, NavbarBrand, FormGroup, Label, Input, Button } from "reactstrap";
+import { fetchWithCatch } from "../../commonFunctions";
+import { addError } from "../ErrorHandler";
 
-function Login({ setToken }) {
-  return (
-    <div>
-    <h1>CT FLOW CONFIGURATOR</h1>
-    <div className="ContainerLogin">
-      <div className="Login">
-        <h2>Login</h2>
-        <LoginForm onLogin={setToken} />
-      </div>
-    </div>
-    </div>
+export default function Login({ loggedIn, handleLogin })
+{
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
+
+  const handleUsernameChange = (value) => {
+    setError(false);
+
+    setUsername(value);
+  };
+
+  const handlePasswordChange = (value) => {
+    setError(false);
+
+    setPassword(value);
+  };
+
+  const handleSubmit = (e) => {
+    // Aggiungi qui la logica per verificare le credenziali
+    fetchWithCatch(`/login?username=${username}&password=${password}`, {}, (json) =>
+    {
+      handleLogin(json.token, username);
+    }, (e) =>
+    {
+      setError(true);
+
+      if(e.status == 401)
+        e.message = "Wrong username or password";
+      
+      //addError(e);
+    });
+
+    setPassword("");
+  };
+
+  if(loggedIn)
+    return (<Navigate to="/" />);
+  else
+    return (
+      <Container className="ContainerLogin">
+        <Navbar fixed="top">
+          <NavbarBrand href="/">CT Configurator</NavbarBrand>
+        </Navbar>
+        <FormGroup >
+        <Label>Username</Label>
+        <Input
+          type="text"
+          name="username"
+          value={username}
+          onChange={(event) => handleUsernameChange(event.target.value)}
+          invalid={error}
+        />
+        <Label>Password</Label>
+        <Input
+          type="password"
+          name="password"
+          value={password}
+          onChange={(event) => handlePasswordChange(event.target.value)}
+          invalid={error}
+        />
+        <Button
+          color="success"
+          className="loginButton"
+          onClick={() => handleSubmit()}
+        >Login</Button>
+      </FormGroup>
+      </Container>
   );
 }
-
-export default Login;

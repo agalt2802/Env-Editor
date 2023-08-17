@@ -21,7 +21,7 @@ export function reset() {
 
 export async function fetchWithCatch(url, params, successCallback, errorCallback, forceJSON = false) {
   if(getToken())
-    params["headers"] = new Headers({ Authorization: 'Bearer '+getToken() });
+    params["headers"] = new Headers({ ...params.headers, Authorization: 'Bearer '+getToken().token });
   
   await fetch("http://127.0.0.1:3001" + url, params)
     .then((response) => {

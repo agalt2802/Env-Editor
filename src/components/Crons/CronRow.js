@@ -53,9 +53,13 @@ export default function CronRow({cron, editCron, refreshList})
 	return (
 		<Row className="cronRow">
 			<Col>{cron.RUN}</Col>
-			<Col style={{overflow: "hidden"}}>{cron.INIT_FLOWS.split(',').map(str => <p>{str}</p>)}</Col>
+			<Col style={{overflow: "hidden"}}>
+				{cron.INIT_FLOWS.split(',').map(str => <p>{str}</p>)}
+			</Col>
 			<Col>{cron.INIT_SCHEDULER}</Col>
-			<Col xs={1}><Input type="checkbox" name="enabled" checked={enabled} onClick={handleChangeStatus} disabled={waiting} /></Col>
+			<Col xs={1}>
+				<Input type="checkbox" name="enabled" checked={enabled} onClick={handleChangeStatus} disabled={waiting} />
+			</Col>
 			<Col xs={2}>
 				<ButtonGroup>
 					<Button color="primary" onClick={handleEdit}>

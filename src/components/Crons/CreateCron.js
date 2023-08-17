@@ -8,7 +8,8 @@ import {
 	Button,
 	ListGroup,
 	ListGroupItem,
-	FormGroup
+	FormGroup,
+	Card
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp, faArrowDown } from "@fortawesome/free-solid-svg-icons";
@@ -239,24 +240,26 @@ export default function CreateCron({showFlowsList, cronID})
 			</Row>
 			<Row>
 				<Label>Seleziona flussi (doppio click)</Label>
-				<Col className="flowsList">
+				<Col>
 					<Label>Flussi disponibili:</Label>
+					<Card style={{height: "100px", overflow: "scroll"}}>
 					<ListGroup>
 						{state.availableFlows.length == 0 && <ListGroupItem disabled>No flow available</ListGroupItem>}
 						{state.availableFlows.map((keyIndex) => (
 							<ListGroupItem id={keyIndex} onClick={selectAvailableFlow} action active={keyIndex == state.selectedAvailableFlow} onDoubleClick={addFlow}>
-								{state.flows[Object.keys(state.flows)[keyIndex]].NAME}
+								{false && state.flows[Object.keys(state.flows)[keyIndex]].NAME}
 							</ListGroupItem>
 						))}
 					</ListGroup>
+					</Card>
 				</Col>
-				<Col className="flowsList">
+				<Col>
 					<Label>Flussi aggiunti al cron:</Label>
-					<ListGroup>
+					<ListGroup className="flowsList">
 						{state.addedFlows.length == 0 && <ListGroupItem disabled>No flow added</ListGroupItem>}
 						{state.addedFlows.map((keyIndex) => (
 							<ListGroupItem id={keyIndex} onClick={selectAddedFlow} action active={keyIndex == state.selectedAddedFlow} onDoubleClick={removeFlow}>
-								{state.flows[Object.keys(state.flows)[keyIndex]].NAME}
+								{false && state.flows[Object.keys(state.flows)[keyIndex]].NAME}
 							</ListGroupItem>
 						))}
 					</ListGroup>

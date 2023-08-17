@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 export function getToken()
 {
-  return sessionStorage.getItem('token');
+  return JSON.parse(sessionStorage.getItem('token'));
 };
 
 export default function useToken()
