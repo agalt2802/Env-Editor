@@ -24,54 +24,56 @@ export default function FlowRow({flow, refreshList})
 
 	const handleRemove = () => setShowDeleteModal(true);
 
-	const deleteFlow = () =>
-	{
-		fetchWithCatch(`/flows/${encodeURIComponent(flow.id)}`, { method: "DELETE" }, refreshList)
-	}
+	const deleteFlow = () => fetchWithCatch(`/flows/${encodeURIComponent(flow.id)}`, { method: "DELETE" }, refreshList);
 
 	return (
         <Card className="rowCard">
 			<CardBody>
-			<Row>
-				<Col className="cardTextCol">
-					<CardText>
-						{flow.NAME}
-					</CardText>
-				</Col>
-				<Col xs="auto">
-					<ButtonGroup>
-						<Button color="primary" onClick={handleInfo} active={showInfos}>
-							<FontAwesomeIcon icon={faCircleInfo} />
-						</Button>
-						<Button color="success" onClick={handleCopy}>
-							<FontAwesomeIcon icon={faCopy} />
-						</Button>
-						<Button color="success" onClick={handleEdit}>
-							<FontAwesomeIcon icon={faPenToSquare} />
-						</Button>
-						<Button color="danger" onClick={handleRemove}>
-							<FontAwesomeIcon icon={faTrash} />
-						</Button>
-						{/*
-						<Button color="success" onClick={handleChangeStatus} disabled={waiting}>
-							{!waiting ?
-								<FontAwesomeIcon icon={(enabled ? faStop : faPlay)} />
-								:
-								<Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-							}
-						</Button>
-						*/}
-					</ButtonGroup>
-				</Col>
+				<Row>
+					<Col className="cardTextCol">
+						<CardText>
+							{flow.NAME}
+						</CardText>
+					</Col>
+					<Col xs="auto">
+						<ButtonGroup>
+							<Button color="primary" onClick={handleInfo} active={showInfos}>
+								<FontAwesomeIcon icon={faCircleInfo} />
+							</Button>
+							<Button color="success" onClick={handleCopy}>
+								<FontAwesomeIcon icon={faCopy} />
+							</Button>
+							<Button color="success" onClick={handleEdit}>
+								<FontAwesomeIcon icon={faPenToSquare} />
+							</Button>
+							<Button color="danger" onClick={handleRemove}>
+								<FontAwesomeIcon icon={faTrash} />
+							</Button>
+							{/*
+							<Button color="success" onClick={handleChangeStatus} disabled={waiting}>
+								{!waiting ?
+									<FontAwesomeIcon icon={(enabled ? faStop : faPlay)} />
+									:
+									<Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+								}
+							</Button>
+							*/}
+						</ButtonGroup>
+					</Col>
+				</Row>
 				<Collapse isOpen={showInfos}>
 					<hr />
-					<Col>
-						{flow.DESCRIPTION !== undefined ? flow.DESCRIPTION : <Alert color="danger">No description provided</Alert>}
-					</Col>
+					<Row>
+						<Col xs={"auto"}>
+							Description:
+						</Col>
+						<Col>
+							{flow.DESCRIPTION !== undefined ? flow.DESCRIPTION : <Alert color="danger" fade={false}>No description provided</Alert>}
+						</Col>
+					</Row>
 				</Collapse>
-				<ConfirmModal text={"Eliminare il flow "+flow.NAME+"?"} visible={showDeleteModal} setVisible={setShowDeleteModal} onConfirm={deleteFlow} />
-			</Row>
 			</CardBody>
+			<ConfirmModal text={"Eliminare il flow "+flow.NAME+"?"} visible={showDeleteModal} setVisible={setShowDeleteModal} onConfirm={deleteFlow} />
 			<CopyFlowModal show={showCopyModal} setShow={setShowCopyModal} flow={flow} />
 		</Card>
 	);

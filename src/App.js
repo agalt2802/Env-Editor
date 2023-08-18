@@ -8,10 +8,11 @@ import useToken from "./components/Login/Token"
 import { Alert } from "reactstrap";
 
 import EditCommons from "./components/EditCommons/EditCommons";
-import UpdateFlows from "./components/Flows/UpdateFlows/UpdateFlows";
+import Flows from "./components/Flows/Flows/Flows";
+import EditFlow from "./components/Flows/UpdateFlows/EditFlow";
 import Crons from "./components/Crons/Crons";
+import EditCron from "./components/Crons/EditCron";
 import ViewLogs from "./components/ViewLogs/ViewLogs";
-import FlowsList from "./components/Flows/Flows/FlowsList";
 
 function App() {
   const { token, setToken } = useToken();
@@ -41,26 +42,41 @@ function App() {
       [
         {
           path: "",
-          element: <FlowsList />
+          element: <Flows />
         },
         {
           path: "new",
-          element: <UpdateFlows />
+          element: <EditFlow />
         },
         {
           path: "edit/:flowID",
-          element: <UpdateFlows />
+          element: <EditFlow />
         },
         {
           path: ":page",
-          element: <FlowsList />
+          element: <Flows />
         }
       ]
     },
     {
       title: "Crons",
       path: "crons",
-      element: <Crons />
+      element: <Outlet />,
+      children:
+      [
+        {
+          path: "",
+          element: <Crons />
+        },
+        {
+          path: "new",
+          element: <EditCron />
+        },
+        {
+          path: "edit/:cronID",
+          element: <EditCron />
+        }
+      ]
     },
     {
       title: "Logs",

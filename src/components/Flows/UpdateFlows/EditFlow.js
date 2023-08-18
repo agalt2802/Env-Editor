@@ -7,7 +7,7 @@ import { fetchWithCatch } from "../../../commonFunctions";
 import ConfirmModal from "../../ConfirmModal";
 import { useParams, useNavigate } from "react-router-dom";
 
-export default function UpdateFlows()
+export default function EditFlow()
 {
   const initalState =
   {
@@ -97,15 +97,15 @@ export default function UpdateFlows()
   const navigateToList = () => navigate("/flows");
   const handleConfirm = () => saveData(navigateToList);
 
-  const handleInputChange = (event, field) =>
+  const handleInputChange = (event) =>
   {
-    let value = event.target.value;
-    
+    let { name, value } = event.target;
+
     setState(prevData =>
     {
-      let data = {...prevData};
+      let data = { ...prevData };
 
-      if(field == Fields.NAME)
+      if(name == "name")
       {
         data.flow.NAME = value;
         data.showError = false;
@@ -130,8 +130,9 @@ export default function UpdateFlows()
             <Label>Nome Flusso</Label>
             <Input
               type="text"
+              name="name"
               value={state.flow.NAME}
-              onChange={(event) => handleInputChange(event, Fields.NAME)}
+              onChange={handleInputChange}
               autoFocus={true}
               disabled={!creation}
               invalid={state.showError}
@@ -151,8 +152,9 @@ export default function UpdateFlows()
             <Label>Descrizione flusso</Label>
             <Input
               type="textarea"
+              name="description"
               value={state.flow.DESCRIPTION}
-              onChange={(event) => handleInputChange(event, Fields.DESCRIPTION)}
+              onChange={handleInputChange}
               autoFocus={true}
             />
           </FormGroup>

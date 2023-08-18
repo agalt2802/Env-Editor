@@ -1,29 +1,78 @@
-import React, { useState } from "react";
-import CronsList from "./CronsList";
-import CreateCron from "./CreateCron"
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Button, Card, CardBody, Alert } from "reactstrap";
+import { fetchWithCatch } from "../../commonFunctions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAdd } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 import "semantic-ui-css/semantic.min.css";
 
+import CronRow from "./CronRow";
+
 export default function Crons()
 {
-	const Actions = 
+	const navigate = useNavigate();
+	const [state, setState] = useState(
 	{
-		LIST: 0,
-		CREATE: 1,
-		EDIT: 2
-	};
+		crons: [],
+		loaded: false
+	});
 
-	const [state, setState] = useState({ action: Actions.LIST });
+	useEffect(() =>
+	{
+		if(!state.loaded)
+			refreshList();
+	}, [state]);
 
-	const showFlowsList = () => { setState({ action: Actions.LIST }); }
-	const createCron = () => { setState({ action: Actions.CREATE }); }
-	const editCron = (cronId) => { setState({ action: Actions.EDIT, cronId: cronId }); }
+	const refreshList = () =>
+	{
+		fetchWithCatch("/crons", {}, (crons) => {
+			setState(
+			{
+				crons: crons,
+				loaded: true
+			});
+		});
+	}
+
+	const createCron = () => navigate("/crons/new");
+
+	const renderCronsRows = () =>
+	{
+		if(state.crons.length == 0)
+			return (
+				<Alert color="danger">No crons in configuration</Alert>
+			);
+		else
+			return state.crons.map((cron, index) =>
+			{
+				return <CronRow key={index} cron={cron} refreshList={refreshList} />;
+			});
+	}
 
 	return (
-		<div>
-			{state.action == Actions.LIST && <CronsList createCron={createCron} editCron={editCron} />}
-			{state.action == Actions.CREATE && <CreateCron showFlowsList={showFlowsList} />}
-			{state.action == Actions.EDIT && <CreateCron showFlowsList={showFlowsList} cronID={state.cronId} />}
-		</div>
+		<Container id="mainContainer">
+			<Row className="pageTitle">
+				<Col>
+					<h1>Manage Crons</h1>
+				</Col>
+			</Row>
+			<Card className="rowCard">
+				<CardBody>
+					<Row>
+						<Col xs="auto">Enabled</Col>
+						<Col>Name</Col>
+						<Col>Scheduling</Col>
+						<Col xs="auto">Actions</Col>
+					</Row>
+				</CardBody>
+			</Card>
+			{renderCronsRows()}
+			<Card className="rowCard">
+				<Button color="primary" onClick={createCron} className="addCronBtn">
+					<FontAwesomeIcon icon={faAdd} />
+				</Button>
+			</Card>
+		</Container>
 	);
 }
