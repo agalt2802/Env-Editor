@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, ListGroup, ListGroupItem, Button } from "reactstrap";
+import { Row, Col, ListGroup, Spinner, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../../commonFunctions";
@@ -13,12 +13,12 @@ export default function Steps({ steps, setSteps })
   const notEditableFileds = ["RUN", "STEP_CONTROL"];
 
   const [showAddStep, setShowAddStep] = useState(false);
-  const [availableSteps, setAvailableSteps] = useState([]);
+  const [availableSteps, setAvailableSteps] = useState(undefined);
   const [selectedStep, setSelectedStep] = useState(undefined);
   
   useEffect(() =>
   {
-		if(availableSteps.length == 0)
+		if(!availableSteps)
 			fetchWithCatch("/steps", {}, setAvailableSteps);
 	}, [availableSteps]);
   
@@ -122,7 +122,7 @@ export default function Steps({ steps, setSteps })
             </Button>
           </Col>
         </Row>
-        {availableSteps.length > 0 &&
+        {!availableSteps ? <div className="text-center"><Spinner /></div> :
           <AddStepModal
             show={showAddStep}
             steps={availableSteps}

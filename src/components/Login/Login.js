@@ -41,7 +41,7 @@ export default function Login({ loggedIn, handleLogin })
   };
 
   if(loggedIn)
-    return (<Navigate to="/" />);
+    return <Navigate to="/" />;
   else
     return (
       <Container className="ContainerLogin">

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Row, Col, ButtonGroup, Button, FormGroup, Input, Card, CardBody, CardText, Collapse } from "reactstrap";
+import { Row, Col, ButtonGroup, Button, FormGroup, Input, Card, CardBody, CardText, Collapse, Spinner } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faStop, faPenToSquare, faTrash, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrash, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../commonFunctions";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ import "semantic-ui-css/semantic.min.css";
 
 import ConfirmModal from "../ConfirmModal";
 
-export default function CronRow({cron, refreshList})
+export default function CronRow({ cron, updateList })
 {
     const navigate = useNavigate();
 	const [enabled, setEnabled] = useState(cron.ENABLED);
@@ -17,13 +17,13 @@ export default function CronRow({cron, refreshList})
 	const [showInfos, setShowInfos] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showChangeStatusModal, setShowChangeStatusModal] = useState(false);
-
+	
 	const handleInfo = () => setShowInfos(!showInfos);
 	const handleEdit = () => navigate("/crons/edit/"+cron.RUN);
 	const handleRemove = () => setShowDeleteModal(true);
 
 	const deleteCron = () =>
-		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}`, { method: "DELETE" }, refreshList);
+		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}`, { method: "DELETE" }, updateList);
 
 	const handleChangeStatus = (e) =>
 	{
@@ -52,9 +52,11 @@ export default function CronRow({cron, refreshList})
 				<Row>
 					<Col xs="auto" className="cardTextCol">
 						<CardText>
-							<FormGroup switch>
-								<Input type="switch" name="enabled" checked={enabled} onChange={handleChangeStatus} disabled={waiting} />
-							</FormGroup>
+							{ waiting ? <div className="text-center"><Spinner /></div> :
+								<FormGroup switch>
+									<Input type="switch" name="enabled" checked={enabled} onChange={handleChangeStatus} disabled={waiting} />
+								</FormGroup>
+							}
 						</CardText>
 					</Col>
 					<Col className="cardTextCol">

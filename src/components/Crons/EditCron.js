@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Label, Input, Button, FormGroup, FormFeedback, Alert } from "reactstrap";
+import { Container, Row, Col, Label, Input, Button, FormGroup, FormFeedback, Spinner } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faSave } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../commonFunctions";
@@ -100,6 +100,7 @@ export default function EditCron()
 					{creation ? <h1>Create New Cron</h1> : <h1>Edit Cron</h1>}
 				</Col>
 			</Row>
+			{!loaded ? <div className="text-center"><Spinner /></div> : <div>
 			<Row>				
 				<FormGroup>
 					<Label>Nome</Label>
@@ -139,7 +140,7 @@ export default function EditCron()
 					</FormGroup>
 				</FormGroup>
 
-				{ loaded && <CronFlows cronFlows={state.flows} setCronFlows={setFlows} /> }
+				<CronFlows cronFlows={state.flows} setCronFlows={setFlows} />
 			</Row>
       
 			<Row>
@@ -165,6 +166,7 @@ export default function EditCron()
 				</Col>
 			</Row>
 			<ConfirmModal text={"Vuoi salvare il cron "+state.name+"?"} visible={showSaveModal} setVisible={setShowSaveModal} onConfirm={save} />
+			</div>}
 		</Container>
 	);
 }

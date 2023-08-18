@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Button, Card, CardBody, Alert } from "reactstrap";
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Button, Card, CardBody, Alert, Spinner } from "reactstrap";
 import { fetchWithCatch } from "../../commonFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
@@ -12,42 +12,25 @@ import CronRow from "./CronRow";
 export default function Crons()
 {
 	const navigate = useNavigate();
-	const [state, setState] = useState(
-	{
-		crons: [],
-		loaded: false
-	});
+	const [crons, setCrons] = useState(undefined);
 
 	useEffect(() =>
 	{
-		if(!state.loaded)
-			refreshList();
-	}, [state]);
+		if(!crons)
+			fetchWithCatch("/crons", {}, setCrons);
+	}, [crons]);
 
-	const refreshList = () =>
-	{
-		fetchWithCatch("/crons", {}, (crons) => {
-			setState(
-			{
-				crons: crons,
-				loaded: true
-			});
-		});
-	}
+	const updateList = () => setCrons(undefined);
 
 	const createCron = () => navigate("/crons/new");
 
 	const renderCronsRows = () =>
 	{
-		if(state.crons.length == 0)
-			return (
-				<Alert color="danger">No crons in configuration</Alert>
-			);
+		console.log(crons.length);
+		if(crons.length == 0)
+			return <Alert color="danger">No crons in configuration</Alert>;
 		else
-			return state.crons.map((cron, index) =>
-			{
-				return <CronRow key={index} cron={cron} refreshList={refreshList} />;
-			});
+			return crons.map((cron, index) => <CronRow key={index} cron={cron} updateList={updateList} />);
 	}
 
 	return (
@@ -57,6 +40,7 @@ export default function Crons()
 					<h1>Manage Crons</h1>
 				</Col>
 			</Row>
+			{!crons ? <div className="text-center"><Spinner /></div> : <div>
 			<Card className="rowCard">
 				<CardBody>
 					<Row>
@@ -73,6 +57,7 @@ export default function Crons()
 					<FontAwesomeIcon icon={faAdd} />
 				</Button>
 			</Card>
+			</div>}
 		</Container>
 	);
 }

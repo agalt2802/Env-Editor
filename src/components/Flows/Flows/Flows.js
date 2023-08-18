@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Card, CardBody, Row, Col, Button, Alert, Pagination, PaginationItem, PaginationLink } from "reactstrap";
+import { Container, Card, CardBody, Row, Col, Button, Alert, Pagination, PaginationItem, PaginationLink, Spinner } from "reactstrap";
 import { fetchWithCatch } from "../../../commonFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
@@ -18,52 +18,35 @@ export default function Flows()
 	
 	const currentPage = (page !== undefined ? page : 1);
 
-	const [state, setState] = useState(
-	{
-		flows: [],
-		loaded: false
-	});
+	const [flows, setFlows] = useState(undefined);
 
 	useEffect(() =>
 	{
-		if(!state.loaded)
-			refreshList();
-	}, [state]);
+		if(!flows)
+			fetchWithCatch("/flows", {}, setFlows);
+	}, [flows]);
 
-	const refreshList = () =>
-	{
-		fetchWithCatch("/flows", {}, (flows) => {
-			setState(
-			{
-				flows: flows,
-				loaded: true
-			});
-		});
-	}
+	const refreshList = () => setFlows(undefined);
 
 	const createFlow = () => navigate("/flows/new");
 
 	const renderFlowsRows = () =>
 	{
-		if(state.flows.length == 0)
-			return (
-				<Alert color="danger">No flows in configuration</Alert>
-			);
+		if(flows.length == 0)
+			return <Alert color="danger">No flows in configuration</Alert>;
 		else
 		{
 			const start = (currentPage-1)*ITEMS_PER_PAGE;
 			
-			return state.flows.slice(start, start+ITEMS_PER_PAGE).map((flow, index) =>
-			{
-				return <FlowRow key={index} flow={flow} refreshList={refreshList} />;
-			});
+			return flows.slice(start, start+ITEMS_PER_PAGE).map((flow, index) =>
+				<FlowRow key={index} flow={flow} refreshList={refreshList} />);
 		}
 	}
 
 	const renderPagination = () =>
 	{
 		const items = [];
-		const pages = Math.ceil(state.flows.length/ITEMS_PER_PAGE)+1;
+		const pages = Math.ceil(flows.length/ITEMS_PER_PAGE)+1;
 		
 		for(let page=1;page<pages;page++)
 			items.push(
@@ -88,6 +71,7 @@ export default function Flows()
 					<h1>Manage Flows</h1>
 				</Col>
 			</Row>
+			{!flows ? <div className="text-center"><Spinner /></div> : <div>
 			{false && renderPagination()}
 			<Card className="rowCard">
 				<CardBody>
@@ -104,6 +88,7 @@ export default function Flows()
 					<FontAwesomeIcon icon={faAdd} />
 				</Button>
 			</Card>
+			</div>}
 		</Container>
 	);
 }

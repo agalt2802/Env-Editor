@@ -1,24 +1,20 @@
 import { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-} from "reactstrap";
+import { Container, Row, Col, Button, Spinner } from "reactstrap";
 import { Modal } from "react-bootstrap";
 import { fetchWithCatch } from "../../commonFunctions";
 
 import CommonsDetails from "./CommonsDetails";
 
 function EditCommons() {
-  const [commons, setCommons] = useState({});
+  const [commons, setCommons] = useState(undefined);
   const [showSaveEdit, setShowSaveEdit] = useState(false)
 
-  useEffect(() => {
-      fetchWithCatch("/commons", {}, (res) => {
-        setCommons(res);
-      });
-  }, []);
+  useEffect(() =>
+  {
+    if(!commons)
+      fetchWithCatch("/commons", {}, setCommons)
+  }
+  , [commons]);
 
   const handleSaveEdit = () =>{
     setShowSaveEdit(true)
@@ -33,7 +29,8 @@ function EditCommons() {
       body: JSON.stringify(commons),
     };
 
-    fetchWithCatch("/updateCommons", params, (res) => {
+    fetchWithCatch("/updateCommons", params, () =>
+    {
       console.log("salva flusso");
     
       setShowSaveEdit(false);
@@ -45,10 +42,12 @@ function EditCommons() {
       <Row>
         <h1>COMMONS CONFIGURATIONS</h1>
       </Row>
-      <CommonsDetails
-      commons={commons}
-      setCommons={setCommons}
-      />
+      {!commons ? <div className="text-center"><Spinner /></div> :
+        <CommonsDetails
+        commons={commons}
+        setCommons={setCommons}
+        />
+      }
       <Row>
         <Col>
           <Button

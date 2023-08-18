@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Button,  Label, Input, FormGroup, FormFeedback } from "reactstrap";
+import { Container, Row, Col, Button,  Label, Input, FormGroup, FormFeedback, Spinner } from "reactstrap";
 import Steps from "./Steps";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +9,10 @@ import { useParams, useNavigate } from "react-router-dom";
 
 export default function EditFlow()
 {
+  const { flowID } = useParams();
+  const navigate = useNavigate();
+  const creation = (flowID === undefined);
+
   const initalState =
   {
     flow:
@@ -19,14 +23,10 @@ export default function EditFlow()
     },
 		showSaveModal: false,
     secrets: {},
-    loaded: false,
+    loaded: creation,
     showError: false
 	};
   const [state, setState] = useState(initalState);
-
-  const { flowID } = useParams();
-  const navigate = useNavigate();
-  const creation = (flowID === undefined);
 
   const Fields = Object.freeze(
   {
@@ -124,6 +124,7 @@ export default function EditFlow()
           <h1>{creation ? "New flow" : "Edit flow" }</h1>
         </Col>
       </Row>
+      {!state.loaded ? <div className="text-center"><Spinner /></div> : <div>
       <Row>
         <Col>
           <FormGroup>
@@ -188,6 +189,7 @@ export default function EditFlow()
           </Button>
         </Col>
       </Row>
+      </div>}
       
       <ConfirmModal
         text={"Salvare le modifiche al flusso "+state.flow.NAME+"?"}

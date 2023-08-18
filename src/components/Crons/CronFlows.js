@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Label, Button, ListGroup, ListGroupItem, FormGroup, Card, Alert } from "reactstrap";
+import { Row, Col, Label, Button, FormGroup, Alert, Spinner } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp, faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../commonFunctions";
@@ -9,13 +9,12 @@ import CronFlowsList from "./CronFlowsList";
 
 export default function CronFlows({ cronFlows, setCronFlows })
 {
-	const [flows, setFlows] = useState([]);
+	const [flows, setFlows] = useState(undefined);
 	const [selectedFlow, setSelectedFlow] = useState();
 
 	useEffect(() =>
 	{
-		if(Object.keys(flows).length === 0)
-		{
+		if(!flows)
 			fetchWithCatch("/flows", {}, (flows) =>
 			{
 				//console.log(flows);
@@ -29,7 +28,6 @@ export default function CronFlows({ cronFlows, setCronFlows })
 
 				setFlows(flowsAssoc);
 			});
-		}
 	}, [flows]);
 
 	const addFlow = () => moveFlow(true);
@@ -69,7 +67,7 @@ export default function CronFlows({ cronFlows, setCronFlows })
 
 	return (
 		<div>
-		{Object.keys(flows).length > 0 &&
+		{!flows ? <div className="text-center"><Spinner /></div> :
 		<FormGroup>
 			<Label>Seleziona flussi (doppio click)</Label>
 			<Row>
