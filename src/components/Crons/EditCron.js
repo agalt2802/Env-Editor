@@ -30,7 +30,7 @@ export default function EditCron()
 	
 	useEffect(() => {
 		if(!loaded && !creation)
-			fetchWithCatch(`/crons/${encodeURIComponent(cronID)}`, {}, cron =>
+			fetchWithCatch("/crons/"+encodeURIComponent(cronID), {}, cron =>
 			{
 				setState({
 					name: cron.RUN,
@@ -58,7 +58,7 @@ export default function EditCron()
 	
 	const save = () =>
 	{
-		fetchWithCatch(`/crons/${encodeURIComponent(state.name)}`,
+		fetchWithCatch("/crons/"+encodeURIComponent(state.name),
 		{
 			method: (creation ? "POST" : "PUT"),
 			headers: {

@@ -13,6 +13,7 @@ import EditFlow from "./components/Flows/UpdateFlows/EditFlow";
 import Crons from "./components/Crons/Crons";
 import EditCron from "./components/Crons/EditCron";
 import ViewLogs from "./components/ViewLogs/ViewLogs";
+import Files from "./components/File/Files";
 
 function App() {
   const { token, setToken } = useToken();
@@ -30,7 +31,7 @@ function App() {
   
   const routes = [
     {
-      title: "Edit Commons",
+      title: "Commons",
       path: "commons",
       element: <EditCommons />
     },
@@ -83,11 +84,11 @@ function App() {
       path: "logs",
       element: <ViewLogs />
     },
-    // {
-    //   title: "Files",
-    //   path: "files",
-    //   element: <Files />
-    // },
+    {
+      title: "Files",
+      path: "files",
+      element: <Files />
+    },
   ];
 
   const handleLogin = (token, user) =>

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { fetchWithCatch } from "../commonFunctions";
+import { fetchWithCatch } from "../../commonFunctions";
+import { FormGroup, Label, Input, Button } from 'reactstrap';
 
-const FileUpload = () => {
+const FileUpload = () =>
+{
   const [file, setFile] = useState(null);
   const inputId = 'fileInput';
 
-  const submitFile = (event) => {
+  const handleClick = (event) =>
+  {
     event.preventDefault();
 
     const formData = new FormData();
@@ -19,16 +22,17 @@ const FileUpload = () => {
     (error) => alert("Si è verificato un errore durante l'upload del file"));
   };
 
-  const handleFileUpload = (event) => {
+  const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
 
   return (
-    <form onSubmit={submitFile}>
-      <label htmlFor={inputId}>Carica il tuo file:</label>
-      <input id={inputId} type="file" onChange={handleFileUpload} />
-      <button type="submit">Carica</button>
-    </form>
+    <FormGroup>
+      <FormGroup>
+        <Input id={inputId} type="file" onChange={handleFileChange} />
+      </FormGroup>
+      <Button onClick={handleClick}>Carica</Button>
+    </FormGroup>
   );
 };
 

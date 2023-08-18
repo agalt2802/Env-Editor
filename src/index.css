@@ -163,7 +163,7 @@ h1{
 
 .navbar ul
 {
-  flex-grow: 0.5;
+  flex-grow: 0.75;
 }
 
 .nav-link:hover
