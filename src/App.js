@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"
 import Home from "./components/Home";
 import Login from "./components/Login/Login";
 import useToken from "./components/Login/Token"
-import { Alert } from "reactstrap";
+import { Alert, Container } from "reactstrap";
 
 import { fetchWithCatch } from "./commonFunctions";
 
@@ -16,6 +16,8 @@ import Crons from "./components/Crons/Crons";
 import EditCron from "./components/Crons/EditCron";
 import ViewLogs from "./components/ViewLogs/ViewLogs";
 import Files from "./components/File/Files";
+import NavBar from "./components/Navbar";
+import ErrorHandler from "./components/ErrorHandler";
 
 function App() {
   const { token, setToken } = useToken();
@@ -107,29 +109,27 @@ function App() {
     setToken();
   }
 
-  let loggedIn = (token != null);
+  const loggedIn = (token != null);
+
+  const errorElement = <ErrorHandler loggedIn={loggedIn} handleLogout={handleLogout} routes={routes} user={(loggedIn ? token.user : "")} />
 
   const router = createBrowserRouter([
     {
       path: "/login",
-      element: <Login loggedIn={loggedIn} handleLogin={handleLogin} />
+      element: <Login loggedIn={loggedIn} handleLogin={handleLogin} />,
+      errorElement: errorElement
     },
     {
       path: "/",
       element: <Home loggedIn={loggedIn} handleLogout={handleLogout} routes={routes} user={(loggedIn ? token.user : "")} />,
-      children: routes
+      children: routes,
+      errorElement: errorElement
     },
   ]);
   
   return (
     <div className="App">
-      <ErrorBoundary
-        FallbackComponent={ErrorFallback}
-        onReset={() => setError(false)}
-        //resetKeys={[explode]}
-      >
-        <RouterProvider router={router} />
-      </ErrorBoundary>
+      <RouterProvider router={router} />
     </div>
   );
 }
