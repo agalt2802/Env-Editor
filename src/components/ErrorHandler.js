@@ -1,31 +1,17 @@
 import React from "react";
-import { Alert } from "reactstrap";
+import  { useRouteError } from "react-router-dom"
+import { Container, Alert } from "reactstrap";
 
-const errorContext = React.createContext(null);
+import NavBar from "./Navbar";
 
-export default function ErrorHandler({ setToken })
+export default function ErrorHandler({ handleLogout, routes, user })
 {
-  const { errors, setErrors } = useState([]);
-
-  const addError = (error) =>
-  {
-  };
+  const error = useRouteError();
 
   return (
-    errors.forEach((error) => 
-    {
-      <Alert color="danger">
-        {error.message}
-      </Alert>
-    })
+    <Container id="homePageContainer">
+      <NavBar handleLogout={handleLogout} routes={routes} user={user} />
+      <Alert color="danger"><b>Error:</b> {error.message}</Alert>
+    </Container>
   );
-}
-
-export const addError = (error) =>
-{
-  const { errors, setErrors } = React.useContext(errorContext);
-
-  errors.push(error);
-
-  setErrors(errors);
 }

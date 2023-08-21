@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom/dist";
-import { Container, Navbar, NavbarBrand, FormGroup, Label, Input, Button } from "reactstrap";
+import { Container, FormGroup, Label, Input, Button } from "reactstrap";
 import { fetchWithCatch } from "../../commonFunctions";
-import { addError } from "../ErrorHandler";
+import Navbar from "../Navbar";
 
 export default function Login({ loggedIn, handleLogin })
 {
@@ -25,17 +25,17 @@ export default function Login({ loggedIn, handleLogin })
   const handleSubmit = (e) => {
     // Aggiungi qui la logica per verificare le credenziali
     fetchWithCatch(`/login?username=${username}&password=${password}`, {}, (json) =>
-    {
-      handleLogin(json.token, username);
-    }, (e) =>
-    {
-      setError(true);
+      handleLogin(json.token, username),
+      (e) =>
+      {
+        setError(true);
 
-      if(e.status == 401)
-        e.message = "Wrong username or password";
-      
-      //addError(e);
-    });
+        if(e.status == 401)
+          e.message = "Wrong username or password";
+        
+        //addError(e);
+      }
+    );
 
     setPassword("");
   };
@@ -45,9 +45,7 @@ export default function Login({ loggedIn, handleLogin })
   else
     return (
       <Container className="ContainerLogin">
-        <Navbar fixed="top">
-          <NavbarBrand href="/">CT Configurator</NavbarBrand>
-        </Navbar>
+        <Navbar />
         <FormGroup >
         <Label>Username</Label>
         <Input
@@ -68,7 +66,7 @@ export default function Login({ loggedIn, handleLogin })
         <Button
           color="success"
           className="loginButton"
-          onClick={() => handleSubmit()}
+          onClick={handleSubmit}
         >Login</Button>
       </FormGroup>
       </Container>

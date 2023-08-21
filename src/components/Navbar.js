@@ -25,16 +25,22 @@ export default function NavBar({ routes, handleLogout, user }) {
   return (
     <Navbar fixed="top" container="fluid">
       <NavbarBrand href="/">CT Configurator</NavbarBrand>
-      <Nav justified pills>
-        {buildItems()}
-      </Nav>
-      <UncontrolledDropdown>
-        <DropdownToggle color="light" caret>My Account</DropdownToggle>
-        <DropdownMenu end>
-          <DropdownItem header>{user}</DropdownItem>
-          <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
+      {
+        routes !== undefined &&
+        <Nav justified pills>
+          {buildItems()}
+        </Nav>
+      }
+      {
+        user !== undefined &&
+        <UncontrolledDropdown>
+          <DropdownToggle color="light" caret>My Account</DropdownToggle>
+          <DropdownMenu end>
+            <DropdownItem header>{user}</DropdownItem>
+            <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+          </DropdownMenu>
+        </UncontrolledDropdown>
+      }
     </Navbar>
   );
 }
