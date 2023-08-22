@@ -1,7 +1,7 @@
 import { getToken } from "./components/Login/Token";
 
 export async function saveData() {
-  await fetch("http://127.0.0.1:8081/newFlow", {
+  await fetch("https://127.0.0.1:8081/newFlow", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -23,7 +23,7 @@ export async function fetchWithCatch(url, params, successCallback, errorCallback
   if(getToken())
     params["headers"] = new Headers({ ...params.headers, Authorization: 'Bearer '+getToken().token });
   
-  await fetch("http://127.0.0.1:3001" + url, params)
+  await fetch("https://127.0.0.1:3001" + url, params)
     .then((response) => {
       if (response.ok) {
         const contentType = response.headers.get("content-type");

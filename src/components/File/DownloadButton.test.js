@@ -37,7 +37,7 @@ describe('DownloadButton', () => {
     fireEvent.click(downloadButton);
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('http://127.0.0.1:8081/download/COMMONS_PATH');
+      expect(global.fetch).toHaveBeenCalledWith('https://127.0.0.1:8081/download/COMMONS_PATH');
       expect(global.URL.createObjectURL).toHaveBeenCalled();
       expect(global.URL.revokeObjectURL).toHaveBeenCalled();
     });
@@ -57,7 +57,7 @@ describe('DownloadButton', () => {
     fireEvent.click(downloadButton);
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('http://127.0.0.1:8081/download/COMMONS_PATH');
+      expect(global.fetch).toHaveBeenCalledWith('https://127.0.0.1:8081/download/COMMONS_PATH');
       expect(global.alert).toHaveBeenCalledWith('Error downloading file');
     });
   });

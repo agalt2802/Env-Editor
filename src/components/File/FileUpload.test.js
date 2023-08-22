@@ -20,7 +20,7 @@ describe('FileUpload', () => {
     fireEvent.click(uploadButton);
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith('http://127.0.0.1:8081/upload', {
+      expect(mockFetch).toHaveBeenCalledWith('https://127.0.0.1:8081/upload', {
         method: 'POST',
         body: expect.any(FormData),
       });
@@ -42,7 +42,7 @@ describe('FileUpload', () => {
     fireEvent.click(uploadButton);
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith('http://127.0.0.1:8081/upload', {
+      expect(mockFetch).toHaveBeenCalledWith('https://127.0.0.1:8081/upload', {
         method: 'POST',
         body: expect.any(FormData),
       });
