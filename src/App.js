@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
+import React from "react";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"
 
 import Home from "./components/Home";
@@ -19,8 +18,8 @@ function App()
 {
   const routes = [
     {
-      title: "Commons",
-      path: "commons",
+      title: "Configurations",
+      path: "config",
       element: <EditCommons />
     },
     {
