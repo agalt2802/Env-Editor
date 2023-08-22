@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, FormGroup, Label, Input } from "reactstrap";
+import { Row, Col, FormGroup, Label, Input } from "reactstrap";
 
 function CommonsDetails({ commons, setCommons }) {
   const handleValueChange = (path, value) => {
@@ -32,41 +32,56 @@ function CommonsDetails({ commons, setCommons }) {
     setCommons(obj);
   };
 
-  const renderFormFields = (obj, parentKey = "", level = 0) => {
-    return Object.keys(obj).map((key) => {
-      const path = parentKey ? `${parentKey}.${key}` : key;
-      if (typeof obj[key] === "object" && obj[key] !== null) {
+  const renderFormFields = (objs, path) => {
+    //console.log(objs);
+
+    return Object.entries(objs).map(([key, obj]) =>
+    {
+      const currentPath = path+"."+key;
+
+      if(typeof obj === "object" && obj !== null)
+      {
         return (
-          <div key={path} style={{ paddingLeft: `${level * 20}px` }}>
+          <FormGroup key={currentPath} style={{paddingLeft: "50px"}}>
             <Label>
               <h3>{key}</h3>
             </Label>
-            {renderFormFields(obj[key], path, level + 1)}
-          </div>
+            {renderFormFields(obj, currentPath)}
+          </FormGroup>
         );
       }
 
       return (
-        <FormGroup key={path} style={{ paddingLeft: `${level * 20}px` }}>
-          <Label>{key}</Label>
+        <FormGroup floating key={currentPath}>
           <Input
+            id={path}
+            placeholder={key}
             type="text"
-            name={path}
+            name={currentPath}
             value={
-              obj[key] === true
+              obj === true
                 ? "true"
-                : obj[key] === false
+                : obj === false
                 ? "false"
-                : obj[key] || ""
+                : obj || ""
             }
-            onChange={(event) => handleValueChange(path, event.target.value)}
+            onChange={(event) => handleValueChange(currentPath, event.target.value)}
           />
+          <Label for={path}>{key}</Label>
         </FormGroup>
       );
     });
   };
 
-  return <Row>{renderFormFields(commons)}</Row>;
+  return (
+    <Row>
+      <Col>
+        <FormGroup>
+          {renderFormFields(commons.COMMONS, "COMMONS")}
+        </FormGroup>
+      </Col>
+    </Row>
+  );
 }
 
 export default CommonsDetails;

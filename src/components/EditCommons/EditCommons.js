@@ -1,83 +1,94 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Spinner } from "reactstrap";
-import { Modal } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faSave } from "@fortawesome/free-solid-svg-icons";
+
 import { fetchWithCatch } from "../../commonFunctions";
 
 import CommonsDetails from "./CommonsDetails";
+import ConfirmModal from "../ConfirmModal";
 
-function EditCommons() {
+function EditCommons()
+{
   const [commons, setCommons] = useState(undefined);
-  const [showSaveEdit, setShowSaveEdit] = useState(false)
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showDiscardModal, setShowDiscardModal] = useState(false);
+
+  const fetchCommons = () => fetchWithCatch("/config/commons", {}, setCommons);
 
   useEffect(() =>
   {
     if(!commons)
-      fetchWithCatch("/commons", {}, setCommons)
-  }
-  , [commons]);
+      fetchCommons();
+  }, [commons]);
 
-  const handleSaveEdit = () =>{
-    setShowSaveEdit(true)
-  }
+  const handleSaveEdit = () => setShowSaveModal(true);
 
-  const handleConfirmSaveEdit = async () => {
+  const handleConfirmSave = async () =>
+  {
+    setShowSaveModal(false);
+    setCommons(undefined);
+
     let params = {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(commons),
     };
 
-    fetchWithCatch("/updateCommons", params, () =>
-    {
-      console.log("salva flusso");
-    
-      setShowSaveEdit(false);
-    });
+    fetchWithCatch("/config/commons", params, fetchCommons);
   }
 
   return (
     <Container>
       <Row>
-        <h1>COMMONS CONFIGURATIONS</h1>
+        <h1>Edit Commons Configurations</h1>
       </Row>
       {!commons ? <div className="text-center"><Spinner /></div> :
         <CommonsDetails
-        commons={commons}
-        setCommons={setCommons}
+          commons={commons}
+          setCommons={setCommons}
         />
       }
-      <Row>
-        <Col>
-          <Button
-            color="success"
-            className="button"
-            onClick={() => handleSaveEdit()}
-          >
-            SAVE EDIT
-          </Button>
-        </Col>
-      </Row>
-
       
-      <Modal
-        show={showSaveEdit}
-        onHide={() => setShowSaveEdit(false)}
-        autoFocus={false}
-        onChange={(event) => event.preventDefault()}
-      >
-        <Modal.Header closeButton> Conferma modifiche</Modal.Header>
-        <Modal.Body>Vuoi salvare le modifiche?</Modal.Body>
-        <Modal.Footer>
-          <Button color="success" onClick={handleConfirmSaveEdit}>
-            Conferma
-          </Button>
-          <Button color="danger" onClick={() => setShowSaveEdit(false)}>
-            Annulla
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {commons &&
+        <Row>
+          <Col>
+            <Button
+              color="danger"
+              className="button"
+              onClick={() => setShowDiscardModal(true)}
+              style={{marginLeft: "0px"}}
+            >
+              <FontAwesomeIcon icon={faTrash} /> Cancel
+            </Button>
+          </Col>
+          <Col className="d-flex justify-content-end">
+            <Button
+              color="success"
+              className="button"
+              onClick={() => setShowSaveModal(true)}
+            >
+              <FontAwesomeIcon icon={faSave} /> Save
+            </Button>
+          </Col>
+        </Row>
+      }
+
+      <ConfirmModal
+        text="Vuoi salvare le modifiche?"
+        visible={showSaveModal}
+        setVisible={setShowSaveModal}
+        onConfirm={handleConfirmSave}
+      />
+
+      <ConfirmModal
+        text="Vuoi eliminare tutte le modifiche?"
+        visible={showDiscardModal}
+        setVisible={setShowDiscardModal}
+        onConfirm={fetchCommons}
+      />
     </Container>
   );
 }
