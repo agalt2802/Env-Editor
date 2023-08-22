@@ -1,24 +1,5 @@
 import { getToken } from "./components/Login/Token";
 
-export async function saveData() {
-  await fetch("https://127.0.0.1:8081/newFlow", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(flow),
-  }).catch((error) => console.log(error));
-  console.log("salva flusso");
-}
-
-export function reset() {
-  setSteps({});
-  setFlow({});
-  setSelectedStep("-- Scegli uno step --");
-  setStepIndex(-1);
-  setInputValue("");
-}
-
 export async function fetchWithCatch(url, params, successCallback, errorCallback, forceJSON = false) {
   if(getToken())
     params["headers"] = new Headers({ ...params.headers, Authorization: 'Bearer '+getToken().token });
