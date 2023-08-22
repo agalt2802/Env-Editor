@@ -1,50 +1,67 @@
-import { Container, Row, Table, Col, Label, Input } from "reactstrap";
+import { useEffect, useState } from "react";
+import { Row, Col, Table, Button, Spinner, Container } from "reactstrap";
+import { Modal } from "react-bootstrap";
 import format from "date-format";
 
-function Logs({ logs, setLogs, selectedDate }) {
-  let type = ["INFO", "ERROR"];
-  let flowNames = [];
-  let flowSteps = [];
+import { fetchWithCatch } from "../../commonFunctions";
+import { useError } from "../ErrorProvider";
 
-  logs.forEach((element) => {
-    if (!flowNames.includes(element.flowName)) {
-      flowNames.push(element.flowName);
-    }
-    console.log("FLOWSTEP: " + element.flowStep)
-    if (!flowSteps.includes(element.flowStep)) {
-      flowSteps.push(element.flowStep);
-    }
-  });
+function Logs({ date })
+{
+  const [logs, setLogs] = useState(undefined);
+  const [error, setError] = useState(undefined);
+  const { addError } = useError();
 
-  let date = format("dd-MM-yyyy", new Date(selectedDate));
-  if (selectedDate != "")
-    return (
-      <Container>
-        <h1>LOGS OF {date}</h1>
-        <Table>
-          <thead>
-            <tr>
-              <th>TYPE</th>
-              <th>TIMESTAMP</th>
-              <th>FLOWNAME</th>
-              <th>FLOWSTEP</th>
-              <th>DATA</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(logs).map((key) => (
-              <tr key={key}>
-                <td>{logs[key].type}</td>
-                <td>{logs[key].timeStamp}</td>
-                <td>{logs[key].flowName}</td>
-                <td>{logs[key].flowStep}</td>
-                <td>{logs[key].type !== 'ERROR' ? logs[key].data : logs[key].data.errorCode + " " + logs[key].data.errorMessage}</td>
-             </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Container>
-    );
+  useEffect(() =>
+  {
+    if(!logs)
+    {
+      const datePath = date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
+      
+      fetchWithCatch("/logs/"+datePath, {}, setLogs,
+        (e) => (e.status === 404 ? setError(e.message) : addError()), true
+      );
+    }
+  }, [logs]);
+
+  return (
+    <div>
+      <Row>
+        <Col>
+          <h1>Logs of {format("dd/MM/yyyy", date)}</h1>
+        </Col>
+      </Row>
+      <Row>
+        {error ? <Col className="d-flex justify-content-center"><b class="text-danger">{date > Date.now() ? "Selected date is after current date!" : "No logs available!"}</b></Col> :
+          !logs ? <div className="text-center"><Spinner /></div> :
+          <Col>
+            <Table>
+              <thead>
+                <tr>
+                  <th>TYPE</th>
+                  <th>TIMESTAMP</th>
+                  <th>FLOWNAME</th>
+                  <th>FLOWSTEP</th>
+                  <th>DATA</th>
+                </tr>
+              </thead>
+              <tbody style={{height: "300px", overflow: "scroll"}}>
+                {logs.map((log, key) => (
+                  <tr key={key}>
+                    <td>{log.type}</td>
+                    <td>{log.timeStamp}</td>
+                    <td>{log.flowName}</td>
+                    <td>{log.flowStep}</td>
+                    <td>{log.type !== 'ERROR' ? log.data : log.data.errorCode + " " + log.data.errorMessage}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Col>
+        }
+      </Row>
+    </div>
+  );
 }
 
 export default Logs;
