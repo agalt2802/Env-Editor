@@ -1,46 +1,65 @@
 import React from "react";
-import { Navbar, NavbarBrand, Nav, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, NavItem } from "reactstrap";
-import { NavLink } from 'react-router-dom'; //use the NnavLink from react-router-dom with class nav-link
+import { Navbar, NavbarBrand, Nav, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, NavItem, Alert } from "reactstrap";
+import { NavLink, useNavigate } from 'react-router-dom'; //use the NavLink from react-router-dom with class nav-link
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 //import "./styles.css";
 
-export default function NavBar({ routes, handleLogout, user }) {
+import useToken from "./Login/Token"
+import { useError } from "./ErrorProvider"
+
+export default function NavBar({ routes })
+{
+  const navigate = useNavigate();
+  const { token, setToken } = useToken();
+  const { error } = useError();
+
+  const isLoggedIn = (token != null);
 
   const buildItems = () =>
   {
     let res = [];
-    routes.forEach(route =>
-    {
-      res.push(
-        <NavItem key={route.path}>
-          <NavLink className="nav-link" to={route.path}>{route.title}</NavLink>
-        </NavItem>
-      );
-    });
+    if(routes)
+      routes.forEach(route =>
+      {
+        if(route.title !== undefined)
+          res.push(
+            <NavItem key={route.path}>
+              <NavLink className="nav-link" to={route.path}>{route.title}</NavLink>
+            </NavItem>
+          );
+      });
 
     return res;
   }
+  
+  const handleLogout = () =>
+  {
+    setToken();
 
-  return (
+    navigate("/login");
+  }
+
+  return ([
     <Navbar fixed="top" container="fluid">
       <NavbarBrand href="/">CT Configurator</NavbarBrand>
       {
-        routes !== undefined &&
+        isLoggedIn &&
         <Nav justified pills>
           {buildItems()}
         </Nav>
       }
       {
-        user !== undefined &&
+        isLoggedIn &&
         <UncontrolledDropdown>
           <DropdownToggle color="light" caret>My Account</DropdownToggle>
           <DropdownMenu end>
-            <DropdownItem header>{user}</DropdownItem>
+            <DropdownItem header>{token.user}</DropdownItem>
             <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
       }
-    </Navbar>
-  );
+    </Navbar>,
+    error && <Alert color="danger"><b>Error:</b> {error}</Alert>
+  ]);
 }

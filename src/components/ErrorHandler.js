@@ -1,16 +1,16 @@
 import React from "react";
-import  { useRouteError } from "react-router-dom"
 import { Container, Alert } from "reactstrap";
+import { useRouteError } from "react-router-dom"
 
 import NavBar from "./Navbar";
 
-export default function ErrorHandler({ handleLogout, routes, user })
+export default function ErrorHandler()
 {
   const error = useRouteError();
 
   return (
     <Container id="homePageContainer">
-      <NavBar handleLogout={handleLogout} routes={routes} user={user} />
+      <NavBar />
       <Alert color="danger"><b>Error:</b> {error.message}</Alert>
     </Container>
   );
