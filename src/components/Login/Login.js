@@ -30,7 +30,19 @@ export default function Login({ handleLogin })
 
   const handleSubmit = (e) => {
     // Aggiungi qui la logica per verificare le credenziali
-    fetchWithCatch(`/login?username=${username}&password=${password}`, {}, (json) =>
+
+    const headers = {
+      'Content-Type': 'application/json', // Specifica il tipo di contenuto
+      // Aggiungi qui altri header se necessario
+    };
+    fetchWithCatch(
+      '/login',
+      {
+        method: 'POST', // Usa il metodo POST per inviare le credenziali
+        body: JSON.stringify({ username, password }), // Converte le credenziali in JSON
+        headers: headers,
+      },
+      (json) =>
       {
         setToken(JSON.stringify(
           {
