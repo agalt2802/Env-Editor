@@ -1,10 +1,16 @@
 import { getToken } from "./components/Login/Token";
 
 export async function fetchWithCatch(url, params, successCallback, errorCallback, forceJSON = false) {
-  if(getToken())
-    params["headers"] = new Headers({ ...params.headers, Authorization: 'Bearer '+getToken().token });
+  const headers = params.headers || {};
   
-  await fetch("https://127.0.0.1:3001" + url, params)
+  // Aggiungi le credenziali nell'header
+  if (getToken()) {
+    headers['Authorization'] = 'Bearer ' + getToken().token;
+    // Aggiungi qui altre informazioni necessarie nell'header
+    // headers['Custom-Header'] = 'Value';
+  }
+
+  await fetch("https://127.0.0.1:3001" + url, { ...params, headers })
     .then((response) => {
       if (response.ok) {
         const contentType = response.headers.get("content-type");
