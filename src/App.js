@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 import Home from "./components/Home";
 import Login from "./components/Login/Login";
@@ -9,7 +9,7 @@ import Flows from "./components/Flows/Flows/Flows";
 import EditFlow from "./components/Flows/UpdateFlows/EditFlow";
 import Crons from "./components/Crons/Crons";
 import EditCron from "./components/Crons/EditCron";
-import ViewLogs from "./components/ViewLogs/ViewLogs";
+import Logs from "./components/Logs/Logs";
 import Files from "./components/File/Files";
 import ErrorHandler from "./components/ErrorHandler";
 import ErrorProvider from "./components/ErrorProvider";
@@ -67,7 +67,7 @@ function App()
     {
       title: "Logs",
       path: "logs",
-      element: <ViewLogs />
+      element: <Logs />
     },
     {
       title: "Files",

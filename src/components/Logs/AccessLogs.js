@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { Row, Col, Table, Button, Spinner, Container } from "reactstrap";
-import { Modal } from "react-bootstrap";
+import { Row, Col, Table, Spinner } from "reactstrap";
 import format from "date-format";
 
 import { fetchWithCatch } from "../../commonFunctions";
 import { useError } from "../ErrorProvider";
 
-function Logs({ date })
+function FlowsLogs({ date })
 {
   const [logs, setLogs] = useState(undefined);
   const [error, setError] = useState(undefined);
@@ -18,7 +17,7 @@ function Logs({ date })
     {
       const datePath = date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
       
-      fetchWithCatch("/logs/"+datePath, {}, setLogs,
+      fetchWithCatch("/logs/access/"+datePath, {}, setLogs,
         (e) => (e.status === 404 ? setError(e.message) : addError()), true
       );
     }
@@ -28,7 +27,7 @@ function Logs({ date })
     <div>
       <Row>
         <Col>
-          <h1>Logs of {format("dd/MM/yyyy", date)}</h1>
+          <h1>Access logs of {format("dd/MM/yyyy", date)}</h1>
         </Col>
       </Row>
       <Row>
@@ -40,12 +39,12 @@ function Logs({ date })
                 <tr>
                   <th>TYPE</th>
                   <th>TIMESTAMP</th>
-                  <th>FLOWNAME</th>
-                  <th>FLOWSTEP</th>
-                  <th>DATA</th>
+                  <th>SOURCE</th>
+                  <th>PATH</th>
+                  <th>MESSAGE</th>
                 </tr>
               </thead>
-              <tbody style={{height: "300px", overflow: "scroll"}}>
+              <tbody style={{height: "500px", overflow: "scroll"}}>
                 {logs.map((log, key) => (
                   <tr key={key}>
                     <td>{log.type}</td>
@@ -64,4 +63,4 @@ function Logs({ date })
   );
 }
 
-export default Logs;
+export default FlowsLogs;

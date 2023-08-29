@@ -41,7 +41,7 @@ export default function NavBar({ routes })
   }
 
   return ([
-    <Navbar fixed="top" container="fluid">
+    <Navbar fixed="top" container="fluid" className="nav-bar">
       <NavbarBrand href="/">CT Configurator</NavbarBrand>
       {
         isLoggedIn &&
