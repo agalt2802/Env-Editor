@@ -1,4 +1,5 @@
 import { getToken } from "./components/Login/Token";
+import {conf} from "./conf.js";
 
 export async function fetchWithCatch(url, params, successCallback, errorCallback, forceJSON = false) {
   const headers = params.headers || {};
@@ -10,7 +11,7 @@ export async function fetchWithCatch(url, params, successCallback, errorCallback
     // headers['Custom-Header'] = 'Value';
   }
 
-  await fetch("https://127.0.0.1:3001" + url, { ...params, headers })
+  await fetch(`https://${conf.host}:${conf.port}` + url, { ...params, headers })
     .then((response) => {
       if (response.ok) {
         const contentType = response.headers.get("content-type");
