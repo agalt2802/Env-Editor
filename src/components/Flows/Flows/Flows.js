@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Card, CardBody, Row, Col, Button, Alert, Pagination, PaginationItem, PaginationLink, Spinner } from "reactstrap";
+import { Container, Card, CardBody, Row, Col, Button, Alert, Pagination, PaginationItem, PaginationLink, Spinner, Label, Input, FormGroup } from "reactstrap";
 import { fetchWithCatch } from "../../../commonFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
@@ -8,6 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import "semantic-ui-css/semantic.min.css";
 
 import FlowRow from "./FlowRow";
+import { set } from "react-hook-form";
 
 export default function Flows()
 {
@@ -19,6 +20,9 @@ export default function Flows()
 	const currentPage = (page !== undefined ? page : 1);
 
 	const [flows, setFlows] = useState(undefined);
+	const [searchQuery, setSearchQuery] = useState("");
+
+	const filteredFlows = flows && flows.filter(element => element.NAME.toLowerCase().includes(searchQuery.toLowerCase()));
 
 	useEffect(() =>
 	{
@@ -38,7 +42,7 @@ export default function Flows()
 		{
 			const start = (currentPage-1)*ITEMS_PER_PAGE;
 			
-			return flows.slice(start, start+ITEMS_PER_PAGE).map((flow, index) =>
+			return filteredFlows.slice(start, start+ITEMS_PER_PAGE).map((flow, index) =>
 				<FlowRow key={index} flow={flow} refreshList={refreshList} />);
 		}
 	}
@@ -46,7 +50,7 @@ export default function Flows()
 	const renderPagination = () =>
 	{
 		const items = [];
-		const pages = Math.ceil(flows.length/ITEMS_PER_PAGE)+1;
+		const pages = Math.ceil(filteredFlows.length/ITEMS_PER_PAGE)+1;
 		
 		for(let page=1;page<pages;page++)
 			items.push(
@@ -64,6 +68,13 @@ export default function Flows()
 		);
 	}
 
+	const handleSearch = (event) =>
+	{
+		navigate("/flows");
+
+		setSearchQuery(event.target.value);
+	}
+
 	return (
 		<Container id="mainContainer">
 			<Row className="pageTitle">
@@ -71,8 +82,21 @@ export default function Flows()
 					<h1>Manage Flows</h1>
 				</Col>
 			</Row>
-			{!flows ? <div className="text-center"><Spinner /></div> : <div>
+			{!filteredFlows ? <div className="text-center"><Spinner /></div> : <div>
 			{false && renderPagination()}
+			<FormGroup row className="mb-5">
+					<Col sm={"auto"} className="d-flex align-items-center">
+						<Label for="search" style={{marginBottom: "0px"}}><b>Search</b></Label>
+					</Col>
+					<Col>
+						<Input
+							id="search"
+							value={searchQuery}
+							onChange={handleSearch}
+							placeholder="Insert text here"
+						/>
+					</Col>
+				</FormGroup>
 			<Card className="rowCard">
 				<CardBody>
 					<Row>
