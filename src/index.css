@@ -236,3 +236,12 @@ h1{
   vertical-align:  middle;
   display:table-cell;
 }
+
+.alerts
+{
+  position: fixed;
+  margin-top: 10px;
+  left: 15%;
+  right: 15%;
+  z-index: 100;
+}
