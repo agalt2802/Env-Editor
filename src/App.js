@@ -13,7 +13,7 @@ import EditCron from "./components/Crons/EditCron";
 import Logs from "./components/Logs/Logs";
 import Files from "./components/File/Files";
 import ErrorHandler from "./components/ErrorHandler";
-import ErrorProvider from "./components/ErrorProvider";
+import ErrorProvider from "./components/AlertProvider";
 
 function App()
 {

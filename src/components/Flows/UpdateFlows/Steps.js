@@ -7,11 +7,14 @@ import { fetchWithCatch } from "../../../commonFunctions";
 import StepRow from "./StepRow";
 import AddStepModal from "./AddStepModal";
 import StepDetails from "./StepDetails";
+import { useAlert } from "../../AlertProvider";
 
 export default function Steps({ steps, setSteps })
 {
   const notEditableFileds = ["RUN", "STEP_CONTROL"];
 
+	const { addError } = useAlert();
+	
   const [showAddStep, setShowAddStep] = useState(false);
   const [availableSteps, setAvailableSteps] = useState(undefined);
   const [selectedStep, setSelectedStep] = useState(undefined);
@@ -19,7 +22,7 @@ export default function Steps({ steps, setSteps })
   useEffect(() =>
   {
 		if(!availableSteps)
-			fetchWithCatch("/steps", {}, setAvailableSteps);
+			fetchWithCatch("/steps", {}, setAvailableSteps, addError);
 	}, [availableSteps]);
   
   const addStep = (newStepID) =>

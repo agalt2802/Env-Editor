@@ -29,9 +29,7 @@ export async function fetchWithCatch(url, params, successCallback, errorCallback
     .catch((e) => {
       if(errorCallback !== undefined)
         errorCallback(e);
-      //else
-        //ErrorHandler.addError(e);
-
+      
       console.log(e.message);
     });
 }

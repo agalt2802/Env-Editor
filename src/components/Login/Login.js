@@ -6,9 +6,12 @@ import { fetchWithCatch } from "../../commonFunctions";
 
 import useToken from "./Token";
 import Navbar from "../Navbar";
+import { useAlert } from "../AlertProvider";
 
-export default function Login({ handleLogin })
+export default function Login()
 {
+	const { addError } = useAlert();
+	
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
@@ -61,8 +64,6 @@ export default function Login({ handleLogin })
           e.message = "Wrong username or password";
 
         setPassword("");
-        
-        //addError(e);
       }
     );
   };

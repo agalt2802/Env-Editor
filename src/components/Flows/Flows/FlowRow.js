@@ -1,20 +1,28 @@
 import React, { useState } from "react";
 import { Card, CardBody, CardText, Alert, Collapse, Row, Col, ButtonGroup, Button, Spinner, Input } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo, faCopy, faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faCopy, faPenToSquare, faTrash, faPlay } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../../commonFunctions";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../../ConfirmModal";
 
 import "semantic-ui-css/semantic.min.css";
 import CopyFlowModal from "./CopyFlowModal";
+import SelectFlowDateModal from "./SelectFlowDateModal";
+import { AlertType } from "../../Alert"
+import { useAlert } from "../../AlertProvider";
 
 export default function FlowRow({flow, refreshList})
 {
+	const { addError } = useAlert();
+	
     const navigate = useNavigate();
 	const [showInfos, setShowInfos] = useState(false);
 	const [showCopyModal, setShowCopyModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showSelectDateModal, setShowSelectDateModal] = useState(false);
+
+	const { addAlert } = useAlert();
 
 	const handleInfo = () => setShowInfos(!showInfos);
 
@@ -24,7 +32,13 @@ export default function FlowRow({flow, refreshList})
 
 	const handleRemove = () => setShowDeleteModal(true);
 
-	const deleteFlow = () => fetchWithCatch(`/flows/${encodeURIComponent(flow.id)}`, { method: "DELETE" }, refreshList);
+	const deleteFlow = () => fetchWithCatch("/flows/"+encodeURIComponent(flow.id), { method: "DELETE" }, refreshList, addError);
+
+	const handleStart = () => setShowSelectDateModal(true);
+
+	const startFlow = () => fetchWithCatch("/flows/"+encodeURIComponent(flow.id)+"/start", {},
+		() => addAlert("Il flusso "+flow.NAME+" è stato avviato", AlertType.INFO),
+		() => addAlert("Errore nell'esecuzione del flusso "+flow.NAME));
 
 	return (
         <Card className="rowCard">
@@ -48,6 +62,9 @@ export default function FlowRow({flow, refreshList})
 							</Button>
 							<Button color="danger" onClick={handleRemove}>
 								<FontAwesomeIcon icon={faTrash} />
+							</Button>
+							<Button color="primary" onClick={handleStart}>
+								<FontAwesomeIcon icon={faPlay} />
 							</Button>
 							{/*
 							<Button color="success" onClick={handleChangeStatus} disabled={waiting}>
@@ -75,6 +92,7 @@ export default function FlowRow({flow, refreshList})
 			</CardBody>
 			<ConfirmModal text={"Eliminare il flow "+flow.NAME+"?"} visible={showDeleteModal} setVisible={setShowDeleteModal} onConfirm={deleteFlow} />
 			<CopyFlowModal show={showCopyModal} setShow={setShowCopyModal} flow={flow} />
+			<SelectFlowDateModal show={showSelectDateModal} setShow={setShowSelectDateModal} flow={flow}  onConfirm={startFlow} />
 		</Card>
 	);
 }

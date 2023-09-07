@@ -6,13 +6,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 //import "./styles.css";
 
 import useToken from "./Login/Token"
-import { useError } from "./ErrorProvider"
+import { useAlert } from "./AlertProvider"
 
 export default function NavBar({ routes })
 {
   const navigate = useNavigate();
   const { token, setToken } = useToken();
-  const { error } = useError();
+  const { alerts } = useAlert();
 
   const isLoggedIn = (token != null);
 
@@ -63,6 +63,6 @@ export default function NavBar({ routes })
         </UncontrolledDropdown>
       }
     </Navbar>,
-    error && <Alert color="danger"><b>Error:</b> {error}</Alert>
+    <div className="alerts">{alerts}</div>
   ]);
 }

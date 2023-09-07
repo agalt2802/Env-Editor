@@ -8,9 +8,12 @@ import { useNavigate } from "react-router-dom";
 import "semantic-ui-css/semantic.min.css";
 
 import ConfirmModal from "../ConfirmModal";
+import { useAlert } from "../AlertProvider";
 
 export default function CronRow({ cron, updateList })
 {
+	const { addError } = useAlert();
+	
     const navigate = useNavigate();
 	const [enabled, setEnabled] = useState(cron.ENABLED);
 	const [waiting, setWaiting] = useState(false);
@@ -23,7 +26,7 @@ export default function CronRow({ cron, updateList })
 	const handleRemove = () => setShowDeleteModal(true);
 
 	const deleteCron = () =>
-		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}`, { method: "DELETE" }, updateList);
+		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}`, { method: "DELETE" }, updateList, addError);
 
 	const handleChangeStatus = (e) =>
 	{

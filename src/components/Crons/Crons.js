@@ -8,16 +8,19 @@ import { useNavigate } from "react-router-dom";
 import "semantic-ui-css/semantic.min.css";
 
 import CronRow from "./CronRow";
+import { useAlert } from "../AlertProvider";
 
 export default function Crons()
 {
+	const { addError } = useAlert();
+	
 	const navigate = useNavigate();
 	const [crons, setCrons] = useState(undefined);
 
 	useEffect(() =>
 	{
 		if(!crons)
-			fetchWithCatch("/crons", {}, setCrons);
+			fetchWithCatch("/crons", {}, setCrons, addError);
 	}, [crons]);
 
 	const updateList = () => setCrons(undefined);

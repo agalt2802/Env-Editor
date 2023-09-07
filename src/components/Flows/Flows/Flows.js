@@ -8,12 +8,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import "semantic-ui-css/semantic.min.css";
 
 import FlowRow from "./FlowRow";
-import { set } from "react-hook-form";
+import { useAlert } from "../../AlertProvider";
 
 export default function Flows()
 {
 	const ITEMS_PER_PAGE = 10;
 
+	const { addError } = useAlert();
+	
 	const { page } = useParams();
 	const navigate = useNavigate();
 	
@@ -27,7 +29,7 @@ export default function Flows()
 	useEffect(() =>
 	{
 		if(!flows)
-			fetchWithCatch("/flows", {}, setFlows);
+			fetchWithCatch("/flows", {}, setFlows, addError);
 	}, [flows]);
 
 	const refreshList = () => setFlows(undefined);
@@ -74,7 +76,7 @@ export default function Flows()
 
 		setSearchQuery(event.target.value);
 	}
-
+	
 	return (
 		<Container id="mainContainer">
 			<Row className="pageTitle">
