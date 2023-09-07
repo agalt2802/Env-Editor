@@ -5,7 +5,7 @@ import useToken from "./Login/Token"
 
 function Welcome()
 {
-	const { token, setToken } = useToken();
+	const { token } = useToken();
 
 	return (
 		<Container id="mainContainer" className="welcome">

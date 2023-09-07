@@ -12,7 +12,7 @@ export default function NavBar({ routes })
 {
   const navigate = useNavigate();
   const { token, setToken } = useToken();
-  const { alerts } = useAlert();
+  const { renderAlerts } = useAlert();
 
   const isLoggedIn = (token != null);
 
@@ -63,6 +63,6 @@ export default function NavBar({ routes })
         </UncontrolledDropdown>
       }
     </Navbar>,
-    <div className="alerts">{alerts}</div>
+    <div className="alerts">{renderAlerts()}</div>
   ]);
 }
