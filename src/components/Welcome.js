@@ -16,7 +16,12 @@ function Welcome()
 			</Row>
 			<Row>
 				<Col>
-					<h3>Welcome {token.user} to CT Flow Configurator!</h3>
+					<h3>Welcome {token.user}!</h3>
+				</Col>
+			</Row>
+			<Row>
+				<Col>
+					<p>This is the CT Flow Configurator</p>
 				</Col>
 			</Row>
 		</Container>
