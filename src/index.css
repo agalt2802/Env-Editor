@@ -171,6 +171,29 @@ h1{
   background: --bg-light;
 }
 
+.brand
+{
+  align-items: center;
+}
+
+#logo
+{
+  height: 30px;
+  margin-right: 5px;
+}
+
+.welcome
+{
+  margin-top: 50px;
+  text-align: center;
+}
+
+.welcome img
+{
+  height: 200px;
+  margin-bottom: 25px;
+}
+
 .card > .list-group:first-child
 {
   border-top: 0px;

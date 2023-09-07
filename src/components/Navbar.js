@@ -42,7 +42,10 @@ export default function NavBar({ routes })
 
   return ([
     <Navbar fixed="top" container="fluid" className="nav-bar">
-      <NavbarBrand href="/">CT Configurator</NavbarBrand>
+      <NavbarBrand href="/" className="d-flex brand">
+        <img alt="logo" id="logo" src="/logo512.png" />
+        CT Configurator
+      </NavbarBrand>
       {
         isLoggedIn &&
         <Nav justified pills>

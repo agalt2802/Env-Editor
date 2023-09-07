@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Home from "./components/Home";
 import Login from "./components/Login/Login";
 
+import Welcome from "./components/Welcome";
 import EditCommons from "./components/EditCommons/EditCommons";
 import Flows from "./components/Flows/Flows/Flows";
 import EditFlow from "./components/Flows/UpdateFlows/EditFlow";
@@ -17,6 +18,10 @@ import ErrorProvider from "./components/ErrorProvider";
 function App()
 {
   const routes = [
+    {
+      path: "",
+      element: <Welcome />
+    },
     {
       title: "Configurations",
       path: "config",
