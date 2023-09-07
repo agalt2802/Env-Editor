@@ -93,7 +93,7 @@ function App()
       errorElement: <ErrorHandler />,
       children: routes
     },
-  ]);
+  ]); // , {basename: 'controltower'} da non sovrascrivere 
   
   return (
     <ErrorProvider className="App">
