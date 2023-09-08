@@ -18,7 +18,7 @@ export default function SelectFlowDateModal({ show, setShow, flow, onConfirm })
 
 	const handleConfirm = (event) =>
 	{
-		onConfirm();
+		onConfirm(date);
 
 		setShow(false);
 	};

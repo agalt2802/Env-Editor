@@ -36,9 +36,24 @@ export default function FlowRow({flow, refreshList})
 
 	const handleStart = () => setShowSelectDateModal(true);
 
-	const startFlow = () => fetchWithCatch("/flows/"+encodeURIComponent(flow.id)+"/start", {},
-		() => addAlert("Il flusso "+flow.NAME+" è stato avviato", AlertType.INFO),
-		() => addAlert("Errore nell'esecuzione del flusso "+flow.NAME));
+	const startFlow = (date) =>
+	{
+		let difference = Date.now()-date;
+		difference /= (1000 * 3600 * 24);	//get difference in days
+
+		const params =
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ offset: Math.floor(difference) })
+		};
+
+		fetchWithCatch("/flows/"+encodeURIComponent(flow.id)+"/start", params,
+			() => addAlert("Il flusso "+flow.NAME+" è stato avviato", AlertType.INFO),
+			(e) => addAlert("Errore nell'esecuzione del flusso "+flow.NAME+" ("+e.message+" - "+e.text+")"));
+	}
 
 	return (
         <Card className="rowCard">
