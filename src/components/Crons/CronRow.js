@@ -32,7 +32,7 @@ export default function CronRow({ cron, updateList })
 		fetchWithCatch("/crons/"+encodeURIComponent(cron.RUN), { method: "DELETE" }, updateList, addError);
 
 	const reloadCron = () =>
-		fetchWithCatch("/crons/"+encodeURIComponent(cron.RUN)+"/reload", {}, () => addAlert("Cron "+cron.RUN+" ricaricato", AlertType.INFO), addError);
+		fetchWithCatch("/crons/"+encodeURIComponent(cron.RUN)+"/reload", {}, () => addAlert("Cron "+cron.RUN+" riavviato", AlertType.INFO), addError);
 
 	const handleChangeStatus = (e) =>
 	{
@@ -121,7 +121,7 @@ export default function CronRow({ cron, updateList })
 				</Collapse>
 				<ConfirmModal text={(enabled ? "Disabilitare" : "Abilitare")+" il cron "+cron.RUN+"?"} visible={showChangeStatusModal} setVisible={setShowChangeStatusModal} onConfirm={changeCronStatus} />
 				<ConfirmModal text={"Eliminare il cron "+cron.RUN+"?"} visible={showDeleteModal} setVisible={setShowDeleteModal} onConfirm={deleteCron} />
-				<ConfirmModal text={"Ricaricare il cron "+cron.RUN+"?"} visible={showReloadModal} setVisible={setShowReloadModal} onConfirm={reloadCron} />
+				<ConfirmModal text={"Riavviare il cron "+cron.RUN+"?"} visible={showReloadModal} setVisible={setShowReloadModal} onConfirm={reloadCron} />
 			</CardBody>
 		</Card>
 	);
