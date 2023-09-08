@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Row, Col, ButtonGroup, Button, FormGroup, Input, Card, CardBody, CardText, Collapse, Spinner } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrash, faCircleInfo, faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../commonFunctions";
 import { useNavigate } from "react-router-dom";
 
@@ -9,10 +9,11 @@ import "semantic-ui-css/semantic.min.css";
 
 import ConfirmModal from "../ConfirmModal";
 import { useAlert } from "../AlertProvider";
+import { AlertType } from "../Alert";
 
 export default function CronRow({ cron, updateList })
 {
-	const { addError } = useAlert();
+	const { addAlert, addError } = useAlert();
 	
     const navigate = useNavigate();
 	const [enabled, setEnabled] = useState(cron.ENABLED);
@@ -20,13 +21,18 @@ export default function CronRow({ cron, updateList })
 	const [showInfos, setShowInfos] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showChangeStatusModal, setShowChangeStatusModal] = useState(false);
+	const [showReloadModal, setShowReloadModal] = useState(false);
 	
 	const handleInfo = () => setShowInfos(!showInfos);
 	const handleEdit = () => navigate("/crons/edit/"+cron.RUN);
 	const handleRemove = () => setShowDeleteModal(true);
+	const handleReload = () => setShowReloadModal(true);
 
 	const deleteCron = () =>
-		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}`, { method: "DELETE" }, updateList, addError);
+		fetchWithCatch("/crons/"+encodeURIComponent(cron.RUN), { method: "DELETE" }, updateList, addError);
+
+	const reloadCron = () =>
+		fetchWithCatch("/crons/"+encodeURIComponent(cron.RUN)+"/reload", {}, () => addAlert("Cron "+cron.RUN+" ricaricato", AlertType.INFO), addError);
 
 	const handleChangeStatus = (e) =>
 	{
@@ -40,7 +46,7 @@ export default function CronRow({ cron, updateList })
 		setWaiting(true);
 
 		let endPoint = (enabled ? "disable" : "enable");
-		fetchWithCatch(`/crons/${encodeURIComponent(cron.RUN)}/${endPoint}`, { method: "PUT" }, (res) =>
+		fetchWithCatch("/crons/"+encodeURIComponent(cron.RUN)+"/"+endPoint, { method: "PUT" }, (res) =>
 		{
 			setWaiting(false);
 
@@ -83,6 +89,9 @@ export default function CronRow({ cron, updateList })
 							<Button color="danger" onClick={handleRemove}>
 								<FontAwesomeIcon icon={faTrash} />
 							</Button>
+							<Button color="primary" onClick={handleReload}>
+								<FontAwesomeIcon icon={faArrowsRotate} />
+							</Button>
 							{/*
 							<Button color="success" onClick={handleChangeStatus} disabled={waiting}>
 								{!waiting ?
@@ -112,6 +121,7 @@ export default function CronRow({ cron, updateList })
 				</Collapse>
 				<ConfirmModal text={(enabled ? "Disabilitare" : "Abilitare")+" il cron "+cron.RUN+"?"} visible={showChangeStatusModal} setVisible={setShowChangeStatusModal} onConfirm={changeCronStatus} />
 				<ConfirmModal text={"Eliminare il cron "+cron.RUN+"?"} visible={showDeleteModal} setVisible={setShowDeleteModal} onConfirm={deleteCron} />
+				<ConfirmModal text={"Ricaricare il cron "+cron.RUN+"?"} visible={showReloadModal} setVisible={setShowReloadModal} onConfirm={reloadCron} />
 			</CardBody>
 		</Card>
 	);
