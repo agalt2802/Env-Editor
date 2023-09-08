@@ -87,18 +87,18 @@ export default function Flows()
 			{!filteredFlows ? <div className="text-center"><Spinner /></div> : <div>
 			{false && renderPagination()}
 			<FormGroup row className="mb-5">
-					<Col sm={"auto"} className="d-flex align-items-center">
-						<Label for="search" style={{marginBottom: "0px"}}><b>Search</b></Label>
-					</Col>
-					<Col>
-						<Input
-							id="search"
-							value={searchQuery}
-							onChange={handleSearch}
-							placeholder="Insert text here"
-						/>
-					</Col>
-				</FormGroup>
+				<Col sm={"auto"} className="d-flex align-items-center">
+					<Label for="search" style={{marginBottom: "0px"}}><b>Filter</b></Label>
+				</Col>
+				<Col>
+					<Input
+						id="search"
+						value={searchQuery}
+						onChange={handleSearch}
+						//placeholder="Insert text here"
+					/>
+				</Col>
+			</FormGroup>
 			<Card className="rowCard">
 				<CardBody>
 					<Row>
