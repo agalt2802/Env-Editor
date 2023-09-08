@@ -11,8 +11,8 @@ export async function fetchWithCatch(url, params, successCallback, errorCallback
     // headers['Custom-Header'] = 'Value';
   }
 
-  await fetch(`https://${conf.host}:${conf.port}` + url, { ...params, headers })
-    .then((response) => {
+  fetch(`https://${conf.host}:${conf.port}` + url, { ...params, headers })
+    .then(async (response) => {
       if (response.ok) {
         const contentType = response.headers.get("content-type");
         let isJSON = contentType && contentType.indexOf("application/json") !== -1;
@@ -21,7 +21,15 @@ export async function fetchWithCatch(url, params, successCallback, errorCallback
       } else {
         let error = new Error(response.statusText);
         error.status = response.status;
-
+        
+        const contentType = response.headers.get("content-type");
+        let isJSON = contentType && contentType.indexOf("application/json") !== -1;
+        if(isJSON)
+        {
+          const res = await response.json();
+          error.text = res.error;
+        }
+        
         throw error;
       }
     })

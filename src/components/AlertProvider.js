@@ -21,7 +21,7 @@ export default function AlertProvider({ children })
 		};
 
 		setAlerts([
-			...alerts,
+			//...alerts,
 			alert
 		]);
 	}
@@ -55,8 +55,10 @@ export function useAlert()
 
 	const renderAlerts = () =>
 	{
-		return alerts.map(alert =>
-			<Alert text={alert.text} type={alert.type} removeHandler={() => removeAlert(alert)} />);
+		/*return alerts.map(alert =>
+			<Alert text={alert.text} type={alert.type} removeHandler={() => removeAlert(alert)} />);*/
+		let alert = alerts[0];
+		return (alert ? <Alert key={Math.random()} text={alert.text} type={alert.type} removeHandler={() => removeAlert(alert)} /> : undefined);
 	}
 
 	return { alerts, addAlert, addError, renderAlerts };
