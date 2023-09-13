@@ -9,9 +9,12 @@ import "semantic-ui-css/semantic.min.css";
 
 import ConfirmModal from "../ConfirmModal";
 import CronFlows from "./CronFlows";
+import { useAlert } from "../AlertProvider";
 
 export default function EditCron()
 {
+	const { addError } = useAlert();
+	
 	const { cronID } = useParams();
 	const creation = (cronID === undefined);
 
@@ -40,7 +43,7 @@ export default function EditCron()
 				});
 
 				setLoaded(true);
-			});
+			}, addError);
 		}, [state.flows]);
 
 	const handleChange = (event) =>

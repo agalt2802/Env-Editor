@@ -3,13 +3,13 @@ import { Row, Col, Table, Spinner } from "reactstrap";
 import format from "date-format";
 
 import { fetchWithCatch } from "../../commonFunctions";
-import { useError } from "../ErrorProvider";
+import { useAlert } from "../AlertProvider";
 
 function FlowsLogs({ date })
 {
   const [logs, setLogs] = useState(undefined);
   const [error, setError] = useState(undefined);
-  const { addError } = useError();
+  const { addError } = useAlert();
 
   useEffect(() =>
   {
@@ -18,7 +18,7 @@ function FlowsLogs({ date })
       const datePath = date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
       
       fetchWithCatch("/logs/access/"+datePath, {}, setLogs,
-        (e) => (e.status === 404 ? setError(e.message) : addError()), true
+        (e) => (e.status === 404 ? setError(e.message) : addError(e)), true
       );
     }
   }, [logs]);

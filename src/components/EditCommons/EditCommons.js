@@ -7,14 +7,17 @@ import { fetchWithCatch } from "../../commonFunctions";
 
 import CommonsDetails from "./CommonsDetails";
 import ConfirmModal from "../ConfirmModal";
+import { useAlert } from "../AlertProvider";
 
 function EditCommons()
 {
+	const { addError } = useAlert();
+	
   const [commons, setCommons] = useState(undefined);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDiscardModal, setShowDiscardModal] = useState(false);
 
-  const fetchCommons = () => fetchWithCatch("/config/commons", {}, setCommons);
+  const fetchCommons = () => fetchWithCatch("/config/commons", {}, setCommons, addError);
 
   useEffect(() =>
   {
@@ -37,7 +40,7 @@ function EditCommons()
       body: JSON.stringify(commons),
     };
 
-    fetchWithCatch("/config/commons", params, fetchCommons);
+    fetchWithCatch("/config/commons", params, fetchCommons, addError);
   }
 
   return (

@@ -6,13 +6,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 //import "./styles.css";
 
 import useToken from "./Login/Token"
-import { useError } from "./ErrorProvider"
+import { useAlert } from "./AlertProvider"
 
 export default function NavBar({ routes })
 {
   const navigate = useNavigate();
   const { token, setToken } = useToken();
-  const { error } = useError();
+  const { renderAlerts } = useAlert();
 
   const isLoggedIn = (token != null);
 
@@ -42,7 +42,10 @@ export default function NavBar({ routes })
 
   return ([
     <Navbar fixed="top" container="fluid" className="nav-bar">
-      <NavbarBrand href="/">CT Configurator</NavbarBrand>
+      <NavbarBrand href="/" className="d-flex brand">
+        <img alt="logo" id="logo" src="/logo512.png" />
+        CT Configurator
+      </NavbarBrand>
       {
         isLoggedIn &&
         <Nav justified pills>
@@ -60,6 +63,6 @@ export default function NavBar({ routes })
         </UncontrolledDropdown>
       }
     </Navbar>,
-    error && <Alert color="danger"><b>Error:</b> {error}</Alert>
+    <div className="alerts">{renderAlerts()}</div>
   ]);
 }

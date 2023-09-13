@@ -6,9 +6,12 @@ import { fetchWithCatch } from "../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 import CronFlowsList from "./CronFlowsList";
+import { useAlert } from "../AlertProvider";
 
 export default function CronFlows({ cronFlows, setCronFlows })
 {
+	const { addError } = useAlert();
+	
 	const [flows, setFlows] = useState(undefined);
 	const [selectedFlow, setSelectedFlow] = useState();
 
@@ -27,7 +30,7 @@ export default function CronFlows({ cronFlows, setCronFlows })
 					flowsAssoc[flow.id] = flow;
 
 				setFlows(flowsAssoc);
-			});
+			}, addError);
 	}, [flows]);
 
 	const addFlow = () => moveFlow(true);

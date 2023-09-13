@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Home from "./components/Home";
 import Login from "./components/Login/Login";
 
+import Welcome from "./components/Welcome";
 import EditCommons from "./components/EditCommons/EditCommons";
 import Flows from "./components/Flows/Flows/Flows";
 import EditFlow from "./components/Flows/UpdateFlows/EditFlow";
@@ -12,11 +13,15 @@ import EditCron from "./components/Crons/EditCron";
 import Logs from "./components/Logs/Logs";
 import Files from "./components/File/Files";
 import ErrorHandler from "./components/ErrorHandler";
-import ErrorProvider from "./components/ErrorProvider";
+import ErrorProvider from "./components/AlertProvider";
 
 function App()
 {
   const routes = [
+    {
+      path: "",
+      element: <Welcome />
+    },
     {
       title: "Configurations",
       path: "config",
@@ -88,7 +93,7 @@ function App()
       errorElement: <ErrorHandler />,
       children: routes
     },
-  ]);
+  ]); // , {basename: 'controltower'} da non sovrascrivere 
   
   return (
     <ErrorProvider className="App">

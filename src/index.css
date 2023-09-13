@@ -19,8 +19,8 @@ code {
   /* align-items: center; Centra verticalmente */
   height: 100%;
   width: 50%;
-  padding-top: 10px;
-  margin: 5% 25%;
+  margin: 0px 25%;
+  margin-top: 50px;
 }
 
 .Login h2 {
@@ -36,6 +36,10 @@ code {
 #homePageContainer, #viewLogsContainer{
   width: 70%;
   padding-top: 55px;
+}
+
+#errorContainer{
+  margin-top: 20px !important
 }
 
 /* .navbar{
@@ -171,6 +175,29 @@ h1{
   background: --bg-light;
 }
 
+.brand
+{
+  align-items: center;
+}
+
+#logo
+{
+  height: 30px;
+  margin-right: 5px;
+}
+
+.welcome
+{
+  margin-top: 50px;
+  text-align: center;
+}
+
+.welcome img
+{
+  height: 200px;
+  margin-bottom: 25px;
+}
+
 .card > .list-group:first-child
 {
   border-top: 0px;
@@ -212,4 +239,13 @@ h1{
   height: 100%;
   vertical-align:  middle;
   display:table-cell;
+}
+
+.alerts
+{
+  position: fixed;
+  margin-top: 10px;
+  left: 15%;
+  right: 15%;
+  z-index: 100;
 }

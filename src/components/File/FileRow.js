@@ -4,9 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import { fetchWithCatch } from "../../commonFunctions";
+import { useAlert } from "../AlertProvider";
 
 export default function FileRow({ file })
 {
+	const { addError } = useAlert();
+	
 	const handleDownload = async (e) =>
 	{
 		e.preventDefault();
@@ -19,7 +22,7 @@ export default function FileRow({ file })
 			link.download = file.name;
 			link.click();
 			URL.revokeObjectURL(url);
-		});
+		}, addError);
 	};
 
 	return (

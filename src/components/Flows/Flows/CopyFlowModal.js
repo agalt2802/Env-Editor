@@ -6,10 +6,14 @@ import { fetchWithCatch } from "../../../commonFunctions";
 
 import "semantic-ui-css/semantic.min.css";
 
+import { useAlert } from "../../AlertProvider";
+
 export default function CopyFlowModal({ show, setShow, flow })
 {
   const originalName = flow.NAME;
 
+	const { addError } = useAlert();
+	
 	const navigate = useNavigate();
   const [newFlowName, setNewFlowName] = useState(''); 
   const [showAlreadyExists, setShowAlreadyExists] = useState(false); 
@@ -36,7 +40,7 @@ export default function CopyFlowModal({ show, setShow, flow })
       if(e.status == 409)
         setShowAlreadyExists(true);
       else
-        throw e;
+        addError(e);
     });
   };
 

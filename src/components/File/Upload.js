@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { fetchWithCatch } from "../../commonFunctions";
 import { FormGroup, Label, Input, Button } from 'reactstrap';
 
+import { useAlert } from "../AlertProvider";
+
 const FileUpload = () =>
 {
+	const { addError } = useAlert();
+	
   const [file, setFile] = useState(null);
   const inputId = 'fileInput';
 
@@ -19,7 +23,7 @@ const FileUpload = () =>
       body: formData,
     },
     (data) => alert(data.message), 
-    (error) => alert("Si è verificato un errore durante l'upload del file"));
+    addError);
   };
 
   const handleFileChange = (event) => {

@@ -6,9 +6,12 @@ import { faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithCatch } from "../../../commonFunctions";
 import ConfirmModal from "../../ConfirmModal";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAlert } from "../../AlertProvider";
 
 export default function EditFlow()
 {
+	const { addError } = useAlert();
+	
   const { flowID } = useParams();
   const navigate = useNavigate();
   const creation = (flowID === undefined);
@@ -53,8 +56,8 @@ export default function EditFlow()
             secrets: json,
             loaded: true
           }));
-        });
-      });
+        }, addError);
+      }, addError);
 	}, [state]);
 
   function saveData(success) {
@@ -71,6 +74,8 @@ export default function EditFlow()
     {
       if(e.status == 409)
         setState({...state, showSaveModal: false, showError: true});
+      else
+        addError(e);
     });
   }
 
